@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<rect x="28" y="28" width="456" height="456" rx="92" fill="#111111"/>
+<text x="256" y="330" text-anchor="middle" font-family="Arial Black, Arial, sans-serif"
+font-size="250" font-style="italic" font-weight="900" fill="#F5F4F0">Z</text>
+<rect x="190" y="375" width="132" height="18" rx="3" fill="#C7F000"/>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300">
+<rect width="900" height="300" fill="none"/>
+<g fill="#111111">
+<text x="450" y="135" text-anchor="middle" font-family="Arial Black, Arial, sans-serif"
+font-size="112" font-style="italic" font-weight="900" letter-spacing="-8">ZERO</text>
+<text x="450" y="198" text-anchor="middle" font-family="Arial, sans-serif"
+font-size="32" font-weight="600" letter-spacing="18">STORE DZ</text>
+</g>
+<rect x="390" y="225" width="120" height="12" rx="2" fill="#C7F000"/>
+</svg>

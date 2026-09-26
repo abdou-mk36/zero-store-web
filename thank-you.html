@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شكراً لك — Zero Store</title>
+    <link rel="stylesheet" href="css/style1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Cairo", sans-serif;
+            background: linear-gradient(180deg, #F5F4EF 0%, #EBE9E1 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .thankyou-container {
+            width: 100%;
+            max-width: 540px;
+            text-align: center;
+        }
+
+        /* ✅ بطاقة الشكر */
+        .thankyou-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 45px 30px 40px;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.08),
+                0 4px 15px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* ✅ الشريط العلوي */
+        .thankyou-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #C7F000 0%, #00A878 100%);
+        }
+
+        /* ✅ الأيقونة */
+        .success-icon {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, #00A878 0%, #00C88C 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 45px;
+            color: #ffffff;
+            box-shadow:
+                0 10px 30px rgba(0, 168, 120, 0.25),
+                0 0 0 8px rgba(0, 168, 120, 0.08);
+            animation: popIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-icon::after {
+            content: '✓';
+            font-weight: 700;
+            animation: checkmark 0.4s ease-out 0.4s both;
+        }
+
+        @keyframes checkmark {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        /* ✅ العنوان الرئيسي */
+        .thankyou-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0B0B0B;
+            margin: 0 0 12px;
+            line-height: 1.3;
+        }
+
+        /* ✅ الوصف */
+        .thankyou-text {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.8;
+            margin: 0 0 30px;
+        }
+
+        /* ✅ تنبيه مهم */
+        .important-note {
+            background: linear-gradient(135deg, #FFF9E6 0%, #FFF4D0 100%);
+            border: 2px solid #FFE066;
+            border-radius: 16px;
+            padding: 20px 22px;
+            margin: 0 0 25px;
+            text-align: right;
+        }
+
+        .important-note .note-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .important-note .note-icon {
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .important-note .note-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #B8860B;
+        }
+
+        .important-note .note-body {
+            font-size: 14px;
+            color: #7A5C00;
+            line-height: 1.8;
+        }
+
+        .important-note .note-body strong {
+            color: #5C4500;
+            font-weight: 800;
+        }
+
+        /* ✅ قائمة الخطوات */
+        .steps-list {
+            background: #F8F8F5;
+            border-radius: 16px;
+            padding: 22px;
+            margin: 0 0 25px;
+            text-align: right;
+        }
+
+        .steps-list .steps-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #0B0B0B;
+            margin: 0 0 15px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .step-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            flex-shrink: 0;
+            width: 26px;
+            height: 26px;
+            background: #C7F000;
+            color: #0B0B0B;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .step-text {
+            font-size: 14px;
+            color: #444;
+            line-height: 1.6;
+            padding-top: 2px;
+        }
+
+        /* ✅ زر العودة */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            height: 56px;
+            background: linear-gradient(135deg, #00A878 0%, #00C88C 100%);
+            color: #ffffff;
+            text-decoration: none;
+            border: none;
+            border-radius: 14px;
+            font-family: "Cairo", sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 168, 120, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 168, 120, 0.3);
+        }
+
+        .back-btn:active {
+            transform: translateY(0);
+        }
+
+        /* ✅ معلومات التواصل */
+        .contact-info {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #F0F0F0;
+            font-size: 13px;
+            color: #888;
+            line-height: 1.8;
+        }
+
+        .contact-info a {
+            color: #00A878;
+            text-decoration: none;
+            font-weight: 700;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+
+        /* ✅ Responsive */
+        @media (max-width: 477px) {
+            .thankyou-card {
+                padding: 35px 22px 30px;
+                border-radius: 20px;
+            }
+
+            .success-icon {
+                width: 75px;
+                height: 75px;
+                font-size: 38px;
+                margin-bottom: 20px;
+            }
+
+            .thankyou-title {
+                font-size: 22px;
+            }
+
+            .thankyou-text {
+                font-size: 14px;
+                margin-bottom: 22px;
+            }
+
+            .important-note {
+                padding: 16px 18px;
+            }
+
+            .important-note .note-title {
+                font-size: 14px;
+            }
+
+            .important-note .note-body {
+                font-size: 13px;
+            }
+
+            .steps-list {
+                padding: 18px;
+            }
+
+            .step-text {
+                font-size: 13px;
+            }
+
+            .back-btn {
+                height: 50px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="thankyou-container">
+
+    <div class="thankyou-card">
+
+        <!-- ✅ أيقونة النجاح -->
+        <div class="success-icon"></div>
+
+        <!-- ✅ العنوان -->
+        <h1 class="thankyou-title">شكراً لثقتك بنا 🌸</h1>
+
+        <!-- ✅ الوصف -->
+        <p class="thankyou-text">
+            تم استلام طلبك بنجاح، ونحن سعداء بخدمتك.
+            <br>
+            سيتواصل معك فريقنا في أقرب وقت لتأكيد الطلب.
+        </p>
+
+        <!-- ✅ تنبيه مهم -->
+        <div class="important-note">
+            <div class="note-header">
+                <span class="note-icon">📞</span>
+                <span class="note-title">تنبيه مهم جداً</span>
+            </div>
+            <div class="note-body">
+                يرجى <strong>الحرص على الرد على المكالمة الهاتفية</strong> التي ستصلك من فريقنا.
+                <br><br>
+                سنتصل بك على الرقم الذي أدخلته لتأكيد طلبك وترتيب التوصيل.
+                <br><br>
+                ⚠️ <strong>في حال عدم الرد</strong>، قد يتم تأخير أو إلغاء الطلب.
+            </div>
+        </div>
+
+        <!-- ✅ الخطوات التالية -->
+        <div class="steps-list">
+            <p class="steps-title">📋 ما سيحدث بعد ذلك؟</p>
+
+            <div class="step-item">
+                <span class="step-number">1</span>
+                <span class="step-text">سنتصل بك خلال <strong>24 ساعة</strong> لتأكيد الطلب.</span>
+            </div>
+
+            <div class="step-item">
+                <span class="step-number">2</span>
+                <span class="step-text">سنرتب معك موعد التوصيل المناسب.</span>
+            </div>
+
+            <div class="step-item">
+                <span class="step-number">3</span>
+                <span class="step-text">سيتم التوصيل والدفع عند الاستلام.</span>
+            </div>
+        </div>
+
+        <!-- ✅ زر العودة -->
+        <a href="sproduct.html" class="back-btn">
+            ← العودة إلى المتجر
+        </a>
+
+        <!-- ✅ معلومات التواصل -->
+        <div class="contact-info">
+            هل لديك استفسار؟ تواصل معنا:
+            <br>
+            <a href="tel:+213775450963">+213 775 45 09 63</a>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
