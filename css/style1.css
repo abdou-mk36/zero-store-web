@@ -5671,49 +5671,34 @@ About
 
     .form-row, .form-row-3 { grid-template-columns: 1fr; gap: 0; }
 
-    /* ✅ كل صف = عمود واحد (كل حقل في سطر) */
-    .row-item,
+    /* ============================================
+       ✅ الحل الجذري: كل صف = عمود واحد
+       ============================================ */
+    .row-item {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        padding: 16px !important;
+        padding-top: 50px !important;
+        position: relative !important;
+    }
+
+    /* إلغاء كل grid */
     .row-item.highlight-row,
     .row-item.qty-row,
     .row-item.detail-row,
     .row-item.review-row {
-        grid-template-columns: 1fr !important;
-        gap: 12px !important;
-        padding: 16px !important;
-        padding-top: 50px !important;
-    }
-
-    /* ✅ إلغاء أي grid-column مخصص */
-    .row-item > div {
-        grid-column: auto !important;
-    }
-
-    /* ✅ زر الحذف أعلى اليمين */
-    .row-remove {
-        position: absolute !important;
-        top: 10px !important;
-        left: 10px !important;
-        width: 30px !important;
-        height: 30px !important;
-        font-size: 16px !important;
-    }
-
-    /* ✅ checkbox "مخفي" في سطر */
-    .row-item.detail-row .d-hidden-wrap,
-    .row-item.detail-row > div:nth-child(4) {
         display: flex !important;
-        align-items: center !important;
-        gap: 10px !important;
-        background: #fff !important;
-        padding: 10px 12px !important;
-        border-radius: 8px !important;
-        border: 1.5px solid #E5E5E5 !important;
-    }
-    .row-item.detail-row .row-label {
-        margin: 0 !important;
+        flex-direction: column !important;
     }
 
-    /* ✅ الحقول بعرض كامل */
+    /* كل div داخلي يأخذ عرض كامل */
+    .row-item > div {
+        width: 100% !important;
+        display: block !important;
+    }
+
+    /* الحقول */
     .row-item input,
     .row-item textarea,
     .row-item select {
@@ -5721,34 +5706,41 @@ About
         box-sizing: border-box !important;
     }
 
-    /* ✅ المنتجات */
-    .product-item { 
-        padding: 12px; 
-        gap: 10px; 
-        flex-wrap: wrap; 
-    }
-    .product-item img { 
-        width: 56px; 
-        height: 56px; 
-    }
-    .product-item-info { 
-        flex: 1 1 calc(100% - 80px); 
-    }
-    .product-item .btn { 
-        flex: 1; 
-        font-size: 12px;
-        padding: 8px;
+    /* زر الحذف في الزاوية */
+    .row-remove {
+        position: absolute !important;
+        top: 10px !important;
+        left: 10px !important;
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 16px !important;
+        z-index: 10 !important;
     }
 
-    /* ✅ زر الحفظ */
-    .save-bar { 
-        padding: 10px 12px; 
-        bottom: 10px; 
-        flex-direction: column;
+    /* checkbox مخفي */
+    .row-item.detail-row .d-hidden-wrap,
+    .row-item.detail-row > div:nth-child(4) {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 10px !important;
+        background: #fff !important;
+        padding: 10px 12px !important;
+        border-radius: 8px !important;
+        border: 1.5px solid #E5E5E5 !important;
+        width: 100% !important;
     }
-    .save-bar .btn { 
-        width: 100%;
-        font-size: 14px; 
-        padding: 12px 14px; 
+    .row-item.detail-row .d-hidden-wrap .row-label {
+        margin: 0 !important;
     }
+
+    /* المنتجات */
+    .product-item { padding: 12px; gap: 10px; flex-wrap: wrap; }
+    .product-item img { width: 56px; height: 56px; }
+    .product-item-info { flex: 1 1 calc(100% - 80px); }
+    .product-item .btn { flex: 1; font-size: 12px; padding: 8px; }
+
+    /* زر الحفظ */
+    .save-bar { padding: 10px 12px; bottom: 10px; flex-direction: column; }
+    .save-bar .btn { width: 100%; font-size: 14px; padding: 12px 14px; }
 }
