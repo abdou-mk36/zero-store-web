@@ -5809,3 +5809,101 @@ About
         font-size: 12px !important;
     }
 }
+
+/* ============================================
+   ✅ الحل النهائي — عرض الصفحة + تدفق الكميات والتفاصيل
+   ============================================ */
+
+/* 1. منع التدفق الأفقي في كل الصفحة */
+html, body {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+}
+
+@media (max-width: 768px) {
+
+    /* 2. اجعل كل الصفحة عمود واحد */
+    .dashboard,
+    .card,
+    .tab-content,
+    form {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 3. ⭐ المفتاح: صف الكميات والتفاصيل → block (ليس grid ولا flex) */
+    .row-item,
+    .row-item.qty-row,
+    .row-item.detail-row,
+    .row-item.review-row,
+    .row-item.highlight-row {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 14px !important;
+        padding-top: 50px !important;
+        position: relative !important;
+        margin-bottom: 12px !important;
+        overflow: hidden !important;
+    }
+
+    /* 4. كل div داخل الصف → سطر كامل */
+    .row-item > div {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-bottom: 12px !important;
+        box-sizing: border-box !important;
+    }
+    .row-item > div:last-child { margin-bottom: 0 !important; }
+
+    /* 5. كل حقل بعرض كامل */
+    .row-item input,
+    .row-item input[type="text"],
+    .row-item input[type="number"],
+    .row-item textarea,
+    .row-item select {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        padding: 10px 12px !important;
+        font-size: 13px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    /* 6. زر الحذف في الزاوية العليا */
+    .row-remove {
+        position: absolute !important;
+        top: 10px !important;
+        left: 10px !important;
+        width: 30px !important;
+        height: 30px !important;
+        font-size: 16px !important;
+        z-index: 10 !important;
+    }
+
+    /* 7. checkbox "مخفي" */
+    .row-item.detail-row > div:nth-child(4),
+    .row-item.detail-row .d-hidden-wrap {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 10px !important;
+        background: #fff !important;
+        padding: 10px !important;
+        border-radius: 8px !important;
+        border: 1.5px solid #E5E5E5 !important;
+        margin-bottom: 0 !important;
+    }
+
+    /* 8. زر الإضافة */
+    .btn-add {
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+}
