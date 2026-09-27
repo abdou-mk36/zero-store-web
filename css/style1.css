@@ -5657,7 +5657,7 @@ About
 
 
 
-@media (max-width: 640px) {
+@media (min-width: 640px) {
     .admin-header { padding: 14px 16px; }
     .admin-header h1 { font-size: 15px; }
     .admin-header h1 span { display: none; }
