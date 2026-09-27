@@ -5744,3 +5744,68 @@ About
     .save-bar { padding: 10px 12px; bottom: 10px; flex-direction: column; }
     .save-bar .btn { width: 100%; font-size: 14px; padding: 12px 14px; }
 }
+
+/* ============================================
+   ✅ إصلاح نهائي للهاتف — كل حقل في سطر
+   ============================================ */
+   @media (max-width: 768px) {
+
+    .row-item,
+    .row-item.qty-row,
+    .row-item.detail-row,
+    .row-item.review-row,
+    .row-item.highlight-row {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 14px !important;
+        padding: 16px !important;
+        padding-top: 55px !important;
+        position: relative !important;
+    }
+
+    .row-item > div,
+    .row-item > div > div {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        display: block !important;
+    }
+
+    .row-item input[type="text"],
+    .row-item input[type="number"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        display: block !important;
+    }
+
+    .row-item .row-remove {
+        position: absolute !important;
+        top: 12px !important;
+        left: 12px !important;
+        width: 34px !important;
+        height: 34px !important;
+        z-index: 20 !important;
+    }
+
+    /* checkbox "مخفي" */
+    .row-item.detail-row .d-hidden-wrap,
+    .row-item.detail-row > div:nth-child(4) {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 10px !important;
+        background: #fff !important;
+        padding: 12px !important;
+        border-radius: 10px !important;
+        border: 1.5px solid #E5E5E5 !important;
+    }
+
+    .row-item.detail-row .d-hidden-wrap .row-label,
+    .row-item.detail-row > div:nth-child(4) .row-label {
+        margin: 0 !important;
+        font-size: 12px !important;
+    }
+}
