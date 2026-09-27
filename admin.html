@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم — Zero Store</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style1.css">
+<style>
+.admin-body { background:#F5F4EF; min-height:100vh; padding:20px; font-family:Cairo,sans-serif; }
+.admin-header { background:#0B0B0B; color:#fff; padding:20px; border-radius:16px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; }
+.admin-header h1 { color:#fff; font-size:22px; margin:0; }
+.admin-logout { background:#E74C3C; color:#fff; border:none; padding:10px 20px; border-radius:10px; cursor:pointer; font-weight:700; }
+.admin-container { max-width:900px; margin:0 auto; }
+.admin-card { background:#fff; border-radius:18px; padding:25px; margin-bottom:20px; box-shadow:0 4px 20px rgba(0,0,0,0.05); }
+.admin-card h2 { font-size:18px; margin:0 0 20px; color:#0B0B0B; }
+.admin-form-group { margin-bottom:15px; }
+.admin-form-group label { display:block; font-weight:700; font-size:14px; margin-bottom:6px; color:#0B0B0B; }
+.admin-form-group input, .admin-form-group textarea, .admin-form-group select {
+    width:100%; padding:12px 14px; border:1.5px solid #E5E5E5; border-radius:12px;
+    font-family:Cairo; font-size:14px; box-sizing:border-box; background:#F8F8F5;
+}
+.admin-form-group input:focus, .admin-form-group textarea:focus { border-color:#00A878; outline:none; background:#fff; }
+.admin-btn { background:#00A878; color:#fff; border:none; padding:14px 30px; border-radius:12px; font-family:Cairo; font-size:15px; font-weight:700; cursor:pointer; }
+.admin-btn:hover { background:#008F65; }
+.admin-btn.secondary { background:#0B0B0B; }
+.admin-btn.danger { background:#E74C3C; padding:8px 16px; font-size:13px; }
+.admin-products-list { display:flex; flex-direction:column; gap:10px; }
+.admin-product-item { display:flex; gap:12px; align-items:center; padding:12px; background:#F8F8F5; border-radius:12px; }
+.admin-product-item img { width:60px; height:60px; border-radius:10px; object-fit:cover; }
+.admin-product-item-info { flex:1; }
+.admin-product-item-info h4 { margin:0 0 4px; font-size:14px; }
+.admin-product-item-info span { font-size:12px; color:#00A878; font-weight:700; }
+.admin-login { max-width:400px; margin:80px auto; background:#fff; padding:30px; border-radius:20px; box-shadow:0 10px 40px rgba(0,0,0,0.1); }
+.admin-login h1 { text-align:center; font-size:24px; margin:0 0 25px; }
+.admin-message { padding:12px; border-radius:10px; margin-bottom:15px; font-size:14px; display:none; }
+.admin-message.success { background:#EFFBF3; color:#1B7A40; display:block; }
+.admin-message.error { background:#FFF0EE; color:#C0392B; display:block; }
+</style>
+</head>
+<body class="admin-body">
+
+<div id="loginScreen" class="admin-login">
+    <h1>🔐 لوحة التحكم</h1>
+    <div id="loginMessage" class="admin-message"></div>
+    <form id="loginForm">
+        <div class="admin-form-group">
+            <label>البريد الإلكتروني</label>
+            <input type="email" id="loginEmail" required>
+        </div>
+        <div class="admin-form-group">
+            <label>كلمة السر</label>
+            <input type="password" id="loginPassword" required>
+        </div>
+        <button type="submit" class="admin-btn" style="width:100%;">دخول</button>
+    </form>
+</div>
+
+<div id="dashboardScreen" class="admin-container" style="display:none;">
+    <div class="admin-header">
+        <h1>📊 لوحة التحكم</h1>
+        <button class="admin-logout" id="logoutBtn">خروج</button>
+    </div>
+
+    <div class="admin-card">
+        <h2 id="formTitle">➕ إضافة منتج جديد</h2>
+        <div id="formMessage" class="admin-message"></div>
+        <form id="productForm">
+            <input type="hidden" id="productId">
+            <div class="admin-form-group">
+                <label>اسم المنتج</label>
+                <input type="text" id="productName" required placeholder="باقة زهور زجاجية">
+            </div>
+            <div class="admin-form-group">
+                <label>الوصف</label>
+                <textarea id="productDescription" rows="3" required placeholder="باقة زهور مضيئة..."></textarea>
+            </div>
+            <div class="admin-form-group">
+                <label>السعر (دج)</label>
+                <input type="number" id="productPrice" required placeholder="2900">
+            </div>
+            <div class="admin-form-group">
+                <label>السعر القديم (اختياري)</label>
+                <input type="number" id="productOldPrice" placeholder="3900">
+            </div>
+            <div class="admin-form-group">
+                <label>الفئة</label>
+                <select id="productCategory">
+                    <option value="ديكور">ديكور</option>
+                    <option value="هدايا">هدايا</option>
+                    <option value="إلكترونيات">إلكترونيات</option>
+                    <option value="مطبخ">مطبخ</option>
+                    <option value="جمال">جمال</option>
+                </select>
+            </div>
+            <div class="admin-form-group">
+                <label>مسار الصورة</label>
+                <input type="text" id="productImage" placeholder="assets/products/bouquet-1.webp">
+                <small style="color:#999;font-size:12px;">ارفع الصورة إلى مجلد assets/products/ ثم اكتب المسار هنا</small>
+            </div>
+            <button type="submit" class="admin-btn" id="submitBtn">حفظ المنتج</button>
+            <button type="button" class="admin-btn secondary" id="cancelBtn" style="display:none;">إلغاء التعديل</button>
+        </form>
+    </div>
+
+    <div class="admin-card">
+        <h2>📦 المنتجات الحالية</h2>
+        <div class="admin-products-list" id="productsList">
+            <p style="text-align:center;color:#999;">جارٍ التحميل...</p>
+        </div>
+    </div>
+
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp, getDoc }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ✅ إعداداتك من Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyAow12Zm1BvMGubA6807hMOBIW4QA1ZFYE",
+  authDomain: "zero-store-dz.firebaseapp.com",
+  projectId: "zero-store-dz",
+  storageBucket: "zero-store-dz.firebasestorage.app",
+  messagingSenderId: "152683195719",
+  appId: "1:152683195719:web:c3d73ef8a9d6e546a2f062"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const loginScreen = document.getElementById('loginScreen');
+const dashboardScreen = document.getElementById('dashboardScreen');
+const loginForm = document.getElementById('loginForm');
+const loginMessage = document.getElementById('loginMessage');
+const productForm = document.getElementById('productForm');
+const formMessage = document.getElementById('formMessage');
+const productsList = document.getElementById('productsList');
+const submitBtn = document.getElementById('submitBtn');
+const cancelBtn = document.getElementById('cancelBtn');
+const formTitle = document.getElementById('formTitle');
+
+// ✅ تسجيل الدخول
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+        loginMessage.textContent = '❌ بيانات الدخول غير صحيحة';
+        loginMessage.className = 'admin-message error';
+    }
+});
+
+// ✅ تسجيل الخروج
+document.getElementById('logoutBtn').addEventListener('click', () => {
+    signOut(auth);
+});
+
+// ✅ متابعة حالة الدخول
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        loginScreen.style.display = 'none';
+        dashboardScreen.style.display = 'block';
+        loadProducts();
+    } else {
+        loginScreen.style.display = 'block';
+        dashboardScreen.style.display = 'none';
+        loginForm.reset();
+    }
+});
+
+// ✅ عرض المنتجات
+function loadProducts() {
+    onSnapshot(collection(db, 'products'), (snapshot) => {
+        if (snapshot.empty) {
+            productsList.innerHTML = '<p style="text-align:center;color:#999;">لا توجد منتجات بعد</p>';
+            return;
+        }
+
+        productsList.innerHTML = '';
+        snapshot.forEach((docSnap) => {
+            const p = docSnap.data();
+            const id = docSnap.id;
+
+            const item = document.createElement('div');
+            item.className = 'admin-product-item';
+            item.innerHTML = `
+                <img src="${p.image || 'assets/product/product-photo/Artboard-1.webp'}" alt="">
+                <div class="admin-product-item-info">
+                    <h4>${p.name}</h4>
+                    <span>${p.price.toLocaleString('ar-DZ')} دج</span>
+                </div>
+                <button class="admin-btn danger" data-edit="${id}">تعديل</button>
+                <button class="admin-btn danger" data-delete="${id}">حذف</button>
+            `;
+            productsList.appendChild(item);
+        });
+
+        productsList.querySelectorAll('[data-edit]').forEach(btn => {
+            btn.addEventListener('click', () => editProduct(btn.dataset.edit));
+        });
+
+        productsList.querySelectorAll('[data-delete]').forEach(btn => {
+            btn.addEventListener('click', () => deleteProduct(btn.dataset.delete));
+        });
+    });
+}
+
+// ✅ حفظ منتج (إضافة أو تعديل)
+productForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const id = document.getElementById('productId').value;
+    const name = document.getElementById('productName').value.trim();
+    const description = document.getElementById('productDescription').value.trim();
+    const price = parseInt(document.getElementById('productPrice').value);
+    const oldPrice = document.getElementById('productOldPrice').value;
+    const category = document.getElementById('productCategory').value;
+    const image = document.getElementById('productImage').value.trim();
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'جارٍ الحفظ...';
+
+    try {
+        const productData = {
+            name,
+            description,
+            price,
+            oldPrice: oldPrice ? parseInt(oldPrice) : null,
+            category,
+            image: image || 'assets/product/product-photo/Artboard-1.webp',
+            updatedAt: serverTimestamp()
+        };
+
+        if (id) {
+            await updateDoc(doc(db, 'products', id), productData);
+            showFormMessage('✅ تم تحديث المنتج', 'success');
+        } else {
+            productData.createdAt = serverTimestamp();
+            await addDoc(collection(db, 'products'), productData);
+            showFormMessage('✅ تم إضافة المنتج', 'success');
+        }
+
+        resetForm();
+    } catch (err) {
+        console.error(err);
+        showFormMessage('❌ حدث خطأ: ' + err.message, 'error');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'حفظ المنتج';
+    }
+});
+
+// ✅ تعديل منتج
+async function editProduct(id) {
+    const docSnap = await getDoc(doc(db, 'products', id));
+    if (!docSnap.exists()) return;
+
+    const p = docSnap.data();
+    document.getElementById('productId').value = id;
+    document.getElementById('productName').value = p.name;
+    document.getElementById('productDescription').value = p.description;
+    document.getElementById('productPrice').value = p.price;
+    document.getElementById('productOldPrice').value = p.oldPrice || '';
+    document.getElementById('productCategory').value = p.category || 'ديكور';
+    document.getElementById('productImage').value = p.image || '';
+
+    formTitle.textContent = '✏️ تعديل المنتج';
+    submitBtn.textContent = 'تحديث';
+    cancelBtn.style.display = 'inline-block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ✅ حذف منتج
+async function deleteProduct(id) {
+    if (!confirm('هل أنت متأكد من الحذف؟')) return;
+    try {
+        await deleteDoc(doc(db, 'products', id));
+        showFormMessage('✅ تم الحذف', 'success');
+    } catch (err) {
+        showFormMessage('❌ خطأ في الحذف', 'error');
+    }
+}
+
+cancelBtn.addEventListener('click', resetForm);
+
+function resetForm() {
+    productForm.reset();
+    document.getElementById('productId').value = '';
+    formTitle.textContent = '➕ إضافة منتج جديد';
+    submitBtn.textContent = 'حفظ المنتج';
+    cancelBtn.style.display = 'none';
+}
+
+function showFormMessage(text, type) {
+    formMessage.textContent = text;
+    formMessage.className = 'admin-message ' + type;
+    setTimeout(() => {
+        formMessage.className = 'admin-message';
+    }, 4000);
+}
+</script>
+
+</body>
+</html>
