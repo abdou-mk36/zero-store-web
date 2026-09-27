@@ -5654,3 +5654,111 @@ About
         font-size: 11px !important;
     }
 }
+
+
+
+@media (max-width: 640px) {
+    .admin-header { padding: 14px 16px; }
+    .admin-header h1 { font-size: 15px; }
+    .admin-header h1 span { display: none; }
+    .admin-logout { padding: 6px 12px; font-size: 12px; }
+
+    .dashboard { padding: 16px 12px 60px; }
+    .card { padding: 16px; border-radius: 16px; }
+
+    .tabs { padding: 4px; gap: 4px; }
+    .tab { padding: 10px 8px; font-size: 12px; }
+
+    .form-row, .form-row-3 { grid-template-columns: 1fr; gap: 0; }
+
+    /* ✅ إصلاح صفوف الكميات */
+    .row-item.qty-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding: 14px;
+    }
+    .row-item.qty-row > div:nth-child(1) { grid-column: 1; }
+    .row-item.qty-row > div:nth-child(2) { grid-column: 2; }
+    .row-item.qty-row > div:nth-child(3) {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: end;
+    }
+
+    /* ✅ إصلاح صفوف التفاصيل */
+    .row-item.detail-row {
+        grid-template-columns: 60px 1fr auto;
+        gap: 10px;
+        padding: 14px;
+    }
+    .row-item.detail-row > div:nth-child(1) { grid-column: 1; }
+    .row-item.detail-row > div:nth-child(2) { grid-column: 2 / -1; }
+    .row-item.detail-row > div:nth-child(3) { grid-column: 1 / -1; }
+    .row-item.detail-row > div:nth-child(4) {
+        grid-column: 1 / 2;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .row-item.detail-row .row-remove {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+    }
+
+    /* ✅ إصلاح صفوف التعليقات */
+    .row-item.review-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding: 14px;
+    }
+    .row-item.review-row > div:nth-child(1) { grid-column: 1; }
+    .row-item.review-row > div:nth-child(2) { grid-column: 2; }
+    .row-item.review-row > div:nth-child(3) { grid-column: 1 / -1; }
+    .row-item.review-row > div:nth-child(4) { grid-column: 1 / -1; }
+    .row-item.review-row .row-remove {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+    }
+
+    /* ✅ إصلاح صفوف الـ Highlights */
+    .row-item.highlight-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 14px;
+    }
+
+    /* ✅ إصلاح عام لكل صف */
+    .row-item {
+        position: relative;
+        padding-top: 40px;
+    }
+
+    .row-remove {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+    }
+
+    /* ✅ منع الصفوف من الخروج */
+    .row-item input {
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* ✅ المنتجات */
+    .product-item { padding: 10px; gap: 10px; flex-wrap: wrap; }
+    .product-item img { width: 50px; height: 50px; }
+    .product-item-info { flex: 1 1 calc(100% - 60px); }
+    .product-item .btn { flex: 1; }
+
+    /* ✅ زر الحفظ */
+    .save-bar { padding: 10px 12px; bottom: 10px; }
+    .save-bar .btn { font-size: 13px; padding: 11px 14px; }
+}
