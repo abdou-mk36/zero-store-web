@@ -944,29 +944,17 @@
                         // ============ 10. عنوان الصفحة ============
             document.title = p.name + ' — Zero Store';
 
-            // ============ 11. إعادة تهيئة السلايدرات ============
-            setTimeout(() => {
-                const ps = window.initSmoothSlider({
-                    trackSelector: '.product-track',
-                    slideSelector: '.product-slide',
-                    dotSelector: '.dot',
-                    autoPlayMs: 3000,
-                    resumeAfterMs: 10000,
-                    hasFillDot: true
-                });
-                if (ps) ps.startAutoPlay();
-                window.productSlider = ps;
-
-                const hs = window.initSmoothSlider({
-                    trackSelector: '.highlights-track',
-                    slideSelector: '.highlight-slide',
-                    dotSelector: '.highlight-dot',
-                    autoPlayMs: 5000,
-                    resumeAfterMs: 10000,
-                    hasFillDot: true
-                });
-                if (hs) hs.startAutoPlay();
-            }, 100);
+                   // ✅ إعادة تهيئة السلايدرات — بطريقة آمنة
+        if (window.productSlider) window.productSlider.stopAutoPlay();
+        if (window.productSlider) {
+            window.productSlider.goTo(0, false);
+            window.productSlider.startAutoPlay();
+        }
+        
+        if (window.highlightsSlider) {
+            window.highlightsSlider.goTo(0, false);
+            window.highlightsSlider.startAutoPlay();
+        }
 
             }).catch(err => console.error('Firebase error:', err));
             }

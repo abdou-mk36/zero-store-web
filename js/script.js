@@ -407,6 +407,7 @@ const highlightsSlider = initSmoothSlider({
     resumeAfterMs: 10000,
     hasFillDot: true
 });
+window.highlightsSlider = highlightsSlider;
 
 if (highlightsSlider) {
     const highlightSection = document.querySelector('.product-highlights');
