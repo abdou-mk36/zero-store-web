@@ -168,6 +168,21 @@
         
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+                // ✅ Skeleton Loading — هياكل مؤقتة
+        const skeleton = `
+            <div class="pro skeleton">
+                <div class="skeleton-img"></div>
+                <div class="skeleton-line"></div>
+                <div class="skeleton-line short"></div>
+                <div class="skeleton-line"></div>
+            </div>
+        `;
+
+        // املأ القسمين بـ 4 هياكل
+        document.querySelectorAll('.pro-container').forEach(c => {
+            c.innerHTML = skeleton.repeat(4);
+        });
         
         onSnapshot(collection(db, 'products'), (snap) => {
             const container = document.querySelector('.pro-container');
