@@ -1006,6 +1006,46 @@ function initDefaultRows() {
 }
 
 initDefaultRows();
+
+/* ✅ إصلاح إجباري للهاتف */
+function fixMobileRows() {
+    if (window.innerWidth > 768) return;
+    document.querySelectorAll('.row-item').forEach(el => {
+        el.style.display = 'block';
+        el.style.padding = '14px';
+        el.style.paddingTop = '50px';
+        el.style.position = 'relative';
+        
+        el.querySelectorAll(':scope > div').forEach(div => {
+            div.style.display = 'block';
+            div.style.width = '100%';
+            div.style.marginBottom = '12px';
+        });
+        
+        el.querySelectorAll('input').forEach(inp => {
+            inp.style.width = '100%';
+            inp.style.boxSizing = 'border-box';
+            inp.style.display = 'block';
+        });
+        
+        const rm = el.querySelector('.row-remove');
+        if (rm) {
+            rm.style.position = 'absolute';
+            rm.style.top = '10px';
+            rm.style.left = '10px';
+        }
+    });
+}
+
+// شغّلها بعد كل إضافة صف جديد
+const _q = addQuantityRow, _d = addDetailRow, _h = addHighlightRow, _r = addReviewRow;
+window.addQuantityRow = function(...a) { _q.apply(this, a); fixMobileRows(); };
+window.addDetailRow = function(...a) { _d.apply(this, a); fixMobileRows(); };
+window.addHighlightRow = function(...a) { _h.apply(this, a); fixMobileRows(); };
+window.addReviewRow = function(...a) { _r.apply(this, a); fixMobileRows(); };
+
+setTimeout(fixMobileRows, 200);
+window.addEventListener('resize', fixMobileRows);
 </script>
 
 </body>
