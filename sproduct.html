@@ -665,6 +665,10 @@
                             </div>
                         </label>
                     `).join('');
+                                        // ✅ تحديث الإجمالي بعد بناء الكميات
+                                        setTimeout(() => {
+                        if (window.updateOrderSummary) window.updateOrderSummary();
+                    }, 100);
                 }
         
                 // ============================================

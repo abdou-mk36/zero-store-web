@@ -1443,9 +1443,15 @@ function checkOfficeAvailability() {
         updateSummary();
     });
 
-    document.querySelectorAll('input[name="quantity"]').forEach(input => {
-        input.addEventListener('change', updateSummary);
-    });
+   // ✅ Event Delegation — يعمل مع الكميات المُضافة من Firebase
+document.addEventListener('change', (e) => {
+    if (e.target.name === 'quantity') {
+        updateSummary();
+    }
+});
+
+// ✅ اجعل الدالة عامة ليستدعيها Firebase
+window.updateOrderSummary = updateSummary;
 
     document.querySelectorAll('input[name="deliveryType"]').forEach(input => {
         input.addEventListener('change', updateSummary);
