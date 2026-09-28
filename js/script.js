@@ -381,7 +381,7 @@ function initSmoothSlider(config) {
 /* =========================================================
    PRODUCT SLIDER
 ========================================================= */
-const productSlider = initSmoothSlider({
+let productSlider = initSmoothSlider({
     trackSelector: '.product-track',
     slideSelector: '.product-slide',
     dotSelector: '.dot',
@@ -391,6 +391,10 @@ const productSlider = initSmoothSlider({
 });
 
 if (productSlider) productSlider.startAutoPlay();
+
+// ✅ اجعله عاماً لإعادة التهيئة
+window.productSlider = productSlider;
+window.initSmoothSlider = initSmoothSlider;
 
 /* =========================================================
    HIGHLIGHTS SLIDER

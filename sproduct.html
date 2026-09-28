@@ -938,6 +938,19 @@
         
             }).catch(err => console.error('Firebase error:', err));
         }
+                // ✅ إعادة تهيئة السلايدر بعد تحميل الصور
+        setTimeout(() => {
+            const newSlider = window.initSmoothSlider({
+                trackSelector: '.product-track',
+                slideSelector: '.product-slide',
+                dotSelector: '.dot',
+                autoPlayMs: 3000,
+                resumeAfterMs: 10000,
+                hasFillDot: true
+            });
+            if (newSlider) newSlider.startAutoPlay();
+            window.productSlider = newSlider;
+        }, 300);
         </script>
     
   
