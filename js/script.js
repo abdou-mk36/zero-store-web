@@ -1527,11 +1527,9 @@ window.updateOrderSummary = updateSummary;
             const submitBtn = document.querySelector('.confirm-order-btn');
             if (!submitBtn) return;
         
-            // ✅ حساب المسافة بين الزر وأسفل الشاشة
             const btnRect = submitBtn.getBoundingClientRect();
             const viewportHeight = window.innerHeight;
         
-            // إذا الزر تحت الشاشة → اسكرول قليل فقط
             if (btnRect.bottom > viewportHeight - 100) {
                 const scrollAmount = btnRect.bottom - viewportHeight + 40;
                 window.scrollBy({
@@ -1550,16 +1548,16 @@ window.updateOrderSummary = updateSummary;
         }
     });
 
-    // ✅ 2. عند النقر على الكمية (click بدل pointerdown)
-    const qtyOptions = document.querySelectorAll('.qty-option');
-    qtyOptions.forEach(option => {
-        option.addEventListener('click', dismissAndScroll);
-    });
-
-    // ✅ 3. عند النقر على نوع التوصيل
-    const deliveryOptions = document.querySelectorAll('.delivery-text-option');
-    deliveryOptions.forEach(option => {
-        option.addEventListener('click', dismissAndScroll);
+    // ✅ 2. Event Delegation — يعمل مع الكميات المُضافة من Firebase
+    orderForm.addEventListener('click', (e) => {
+        // الكمية
+        if (e.target.closest('.qty-option')) {
+            dismissAndScroll();
+        }
+        // التوصيل
+        if (e.target.closest('.delivery-text-option')) {
+            dismissAndScroll();
+        }
     });
 
 })();
