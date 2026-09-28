@@ -139,7 +139,7 @@
 
     </section>
 
-    <section id="banner" class="section-m1" id ="data-discount-banner">
+    <section id="banner" class="section-m1" data-discount-banner>
         <h4>عرض خاص</h4>
         <h2>خصومات تصل إلى <span>70٪</span></h2>
         <button class="normal" onclick="window.location.href='shop.html'">
@@ -399,8 +399,10 @@
         }
         
         onSnapshot(collection(db, 'products'), (snap) => {
-            const normal = [];      // بدون تخفيض
-            const discounted = [];  // مع تخفيض
+        
+            // ============ تصنيف المنتجات ============
+            const normal = [];       // بدون تخفيض
+            const discounted = [];   // مع تخفيض
         
             snap.forEach(d => {
                 const p = d.data();
@@ -411,7 +413,7 @@
                 }
             });
         
-            // ✅ القسم الأول: منتجات عادية (بدون تخفيض)
+            // ============ القسم الأول: منتجات جديدة ============
             const sec1 = document.querySelector('#product1');
             const cont1 = sec1 ? sec1.querySelector('.pro-container') : null;
             if (sec1 && cont1) {
@@ -423,7 +425,7 @@
                 }
             }
         
-            // ✅ القسم الثاني: المنتجات المخفّضة فقط
+            // ============ القسم الثاني: أسعار جديدة (تخفيضات) ============
             const sec2 = document.querySelectorAll('.products-section')[1];
             const cont2 = sec2 ? sec2.querySelector('.pro-container') : null;
             if (sec2 && cont2) {
@@ -434,17 +436,14 @@
                     cont2.innerHTML = discounted.map(x => renderProduct(x.p, x.id)).join('');
                 }
             }
-                        // ✅ إخفاء/إظهار بانر العروض
+        
+            // ============ بانر العروض ============
             const banner = document.querySelector('[data-discount-banner]');
             if (banner) {
-                if (discounted.length === 0) {
-                    banner.style.display = 'none';
-                } else {
-                    banner.style.display = '';
-                }
+                banner.style.display = discounted.length > 0 ? '' : 'none';
             }
         });
-        </script>
+        </script>  
 
 </body>
 
