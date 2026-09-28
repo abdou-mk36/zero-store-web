@@ -139,7 +139,7 @@
 
     </section>
 
-    <section id="banner" class="section-m1">
+    <section id="banner" class="section-m1" id ="data-discount-banner">
         <h4>عرض خاص</h4>
         <h2>خصومات تصل إلى <span>70٪</span></h2>
         <button class="normal" onclick="window.location.href='shop.html'">
@@ -432,6 +432,15 @@
                 } else {
                     sec2.style.display = '';
                     cont2.innerHTML = discounted.map(x => renderProduct(x.p, x.id)).join('');
+                }
+            }
+                        // ✅ إخفاء/إظهار بانر العروض
+            const banner = document.querySelector('[data-discount-banner]');
+            if (banner) {
+                if (discounted.length === 0) {
+                    banner.style.display = 'none';
+                } else {
+                    banner.style.display = '';
                 }
             }
         });
