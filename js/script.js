@@ -1006,14 +1006,16 @@ function sendToTelegram(chatId, message) {
             `📅 ${new Date().toLocaleString('ar-DZ')}`
         )
         .then(() => {
-            // ✅ انتقال بعد انتهاء Telegram
+            // ✅ انتقال مع ID المنتج
             setTimeout(() => {
-                window.location.href = 'thank-you.html';
+                const pid = window.currentProductId || '';
+                window.location.href = 'thank-you.html' + (pid ? '?id=' + pid : '');
             }, 500);
         })
         .catch(err => {
             console.warn('Telegram error:', err);
-            window.location.href = 'thank-you.html';
+            const pid = window.currentProductId || '';
+            window.location.href = 'thank-you.html' + (pid ? '?id=' + pid : '');
         });
     });
 

@@ -361,8 +361,8 @@
         </div>
 
         <!-- ✅ زر العودة -->
-        <a href="sproduct.html" class="back-btn">
-            ← العودة إلى المتجر
+        <a href="sproduct.html" class="back-btn" id="backToProductBtn">
+            ← العودة إلى المنتج
         </a>
 
         <!-- ✅ معلومات التواصل -->
@@ -375,6 +375,16 @@
     </div>
 
 </div>
-
+<script>
+    // ✅ استرجع المنتج من الرابط
+    const pid = new URLSearchParams(location.search).get('id');
+    const backBtn = document.getElementById('backToProductBtn');
+    if (pid && backBtn) {
+        backBtn.href = 'sproduct.html?id=' + pid;
+    } else if (backBtn) {
+        backBtn.href = 'shop.html';
+        backBtn.innerHTML = '← العودة إلى المتجر';
+    }
+</script>
 </body>
 </html>
