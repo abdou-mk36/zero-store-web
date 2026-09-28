@@ -783,16 +783,15 @@
                 if (!snap.exists()) return;
                 const p = snap.data();
         
-                // ============ 1. الصور (السلايدر) ============
-                const images = p.images && p.images.length > 0 ? p.images : ['assets/product/product-photo/photo-product.webp'];
-                const track = document.querySelector('.product-track');
-                if (track) {
-                    track.innerHTML = images.map(img => `
-                        <div class="product-slide">
-                            <img src="${img}" alt="${p.name}">
-                        </div>
-                    `).join('');
-                }
+                                // ============ 1. الصور — تحديث src فقط ============
+                const images = (p.images && p.images.length > 0) 
+                    ? p.images 
+                    : ['assets/product/product-photo/photo-product.webp'];
+                
+                document.querySelectorAll('.product-slide img').forEach((img, i) => {
+                    img.src = images[i % images.length];
+                    img.alt = p.name;
+                });
         
                 // ============ 2. الاسم والوصف ============
                 const titleEl = document.querySelector('.product-title');
@@ -836,15 +835,14 @@
                     if (discountEl) discountEl.style.display = 'none';
                 }
         
-                // ============ 5. الصور Highlights ============
+                                // ============ 5. Highlights — تحديث src فقط ============
                 const highlights = p.highlights || [];
-                const hlTrack = document.querySelector('.highlights-track');
-                if (hlTrack && highlights.length > 0) {
-                    hlTrack.innerHTML = highlights.map(h => `
-                        <div class="highlight-slide">
-                            <img src="${h.image}" alt="${h.caption || ''}">
-                        </div>
-                    `).join('');
+                if (highlights.length > 0) {
+                    document.querySelectorAll('.highlight-slide img').forEach((img, i) => {
+                        const h = highlights[i % highlights.length];
+                        img.src = h.image;
+                        img.alt = h.caption || '';
+                    });
                 }
         
                 // ============ 6. الكميات ============
