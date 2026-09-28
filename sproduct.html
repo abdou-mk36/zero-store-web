@@ -10,6 +10,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style1.css">
+    <style>
+        .product-slider,
+        .product-track,
+        .highlights-slider,
+        .highlights-track {
+            direction: ltr !important;
+        }
+    </style>
     <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
 </head>
 
@@ -932,25 +940,37 @@
                         </label>
                     `).join('');
                 }
-        
-                // ============ 10. عنوان الصفحة ============
-                document.title = p.name + ' — Zero Store';
-        
+            
+                        // ============ 10. عنوان الصفحة ============
+            document.title = p.name + ' — Zero Store';
+
+            // ============ 11. إعادة تهيئة السلايدرات ============
+            setTimeout(() => {
+                const ps = window.initSmoothSlider({
+                    trackSelector: '.product-track',
+                    slideSelector: '.product-slide',
+                    dotSelector: '.dot',
+                    autoPlayMs: 3000,
+                    resumeAfterMs: 10000,
+                    hasFillDot: true
+                });
+                if (ps) ps.startAutoPlay();
+                window.productSlider = ps;
+
+                const hs = window.initSmoothSlider({
+                    trackSelector: '.highlights-track',
+                    slideSelector: '.highlight-slide',
+                    dotSelector: '.highlight-dot',
+                    autoPlayMs: 5000,
+                    resumeAfterMs: 10000,
+                    hasFillDot: true
+                });
+                if (hs) hs.startAutoPlay();
+            }, 100);
+
             }).catch(err => console.error('Firebase error:', err));
-        }
-                // ✅ إعادة تهيئة السلايدر بعد تحميل الصور
-        setTimeout(() => {
-            const newSlider = window.initSmoothSlider({
-                trackSelector: '.product-track',
-                slideSelector: '.product-slide',
-                dotSelector: '.dot',
-                autoPlayMs: 3000,
-                resumeAfterMs: 10000,
-                hasFillDot: true
-            });
-            if (newSlider) newSlider.startAutoPlay();
-            window.productSlider = newSlider;
-        }, 300);
+            }
+       
         </script>
     
   
