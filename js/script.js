@@ -1,4 +1,4 @@
-
+window.skipAutoSliders = new URLSearchParams(location.search).has('id');
 /* =========================================================
    GOOGLE SHEETS — إعدادات
 ========================================================= */
@@ -381,16 +381,18 @@ function initSmoothSlider(config) {
 /* =========================================================
    PRODUCT SLIDER
 ========================================================= */
-let productSlider = initSmoothSlider({
-    trackSelector: '.product-track',
-    slideSelector: '.product-slide',
-    dotSelector: '.dot',
-    autoPlayMs: 3000,
-    resumeAfterMs: 10000,
-    hasFillDot: true
-});
-
-if (productSlider) productSlider.startAutoPlay();
+let productSlider = null;
+if (!window.skipAutoSliders) {
+    productSlider = initSmoothSlider({
+        trackSelector: '.product-track',
+        slideSelector: '.product-slide',
+        dotSelector: '.dot',
+        autoPlayMs: 3000,
+        resumeAfterMs: 10000,
+        hasFillDot: true
+    });
+    if (productSlider) productSlider.startAutoPlay();
+}
 
 // ✅ اجعله عاماً لإعادة التهيئة
 window.productSlider = productSlider;
@@ -399,40 +401,39 @@ window.initSmoothSlider = initSmoothSlider;
 /* =========================================================
    HIGHLIGHTS SLIDER
 ========================================================= */
-const highlightsSlider = initSmoothSlider({
-    trackSelector: '.highlights-track',
-    slideSelector: '.highlight-slide',
-    dotSelector: '.highlight-dot',
-    autoPlayMs: 5000,
-    resumeAfterMs: 10000,
-    hasFillDot: true
-});
-window.highlightsSlider = highlightsSlider;
+let highlightsSlider = null;
+if (!window.skipAutoSliders) {
+    highlightsSlider = initSmoothSlider({
+        trackSelector: '.highlights-track',
+        slideSelector: '.highlight-slide',
+        dotSelector: '.highlight-dot',
+        autoPlayMs: 5000,
+        resumeAfterMs: 10000,
+        hasFillDot: true
+    });
 
-if (highlightsSlider) {
-    const highlightSection = document.querySelector('.product-highlights');
-    if (highlightSection) {
-        let isVisible = false;
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && !isVisible) {
-                    isVisible = true;
-                    highlightsSlider.startAutoPlay(true);
-                } else if (!entry.isIntersecting && isVisible) {
-                    isVisible = false;
-                    highlightsSlider.stopAutoPlay();
-                }
-            });
-        }, {
-            threshold: 0.1,
-            rootMargin: '100px 0px'
-        });
-
-        observer.observe(highlightSection);
+    if (highlightsSlider) {
+        const highlightSection = document.querySelector('.product-highlights');
+        if (highlightSection) {
+            let isVisible = false;
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !isVisible) {
+                        isVisible = true;
+                        highlightsSlider.startAutoPlay(true);
+                    } else if (!entry.isIntersecting && isVisible) {
+                        isVisible = false;
+                        highlightsSlider.stopAutoPlay();
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '100px 0px' });
+            observer.observe(highlightSection);
+        }
     }
 }
 
+// ✅ اجعله عاماً لإعادة التهيئة
+window.highlightsSlider = highlightsSlider;
 /* =========================================================
    ORDER BUTTON
 ========================================================= */
@@ -473,7 +474,7 @@ document.addEventListener("DOMContentLoaded", function () {
 /* =========================================================
    TESTIMONIALS WHEEL — Snap هادئ جداً
 ========================================================= */
-(function initTestimonialsWheel() {
+window.initTestimonialsWheel = function() {
 
     const section = document.querySelector('.testimonials-wheel');
     const stage   = document.querySelector('.wheel-stage');
@@ -675,8 +676,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     onScroll();
-
-})();
+};
+// تشغيل تلقائي في الصفحات التي لا تحتوي على Firebase
+if (document.getElementById('wheelTrack') && !new URLSearchParams(location.search).get('id')) {
+    window.initTestimonialsWheel();
+}
 
 /* =========================================================
    ADD REVIEW — EmailJS
