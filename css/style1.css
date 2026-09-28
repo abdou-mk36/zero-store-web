@@ -696,7 +696,7 @@ button.white {
 /* ✅ التفاصيل */
 .products-section .pro .des {
     text-align: right;
-    padding: 0 4px 60px;
+    padding: 0 4px 55px;
     flex: 1;
     position: relative;
 }
@@ -763,32 +763,35 @@ button.white {
 }
 
 /* ✅ زر السلة */
-.pro-cart-btn {
+.pro-order-btn {
     position: absolute;
     bottom: 12px;
     left: 12px;
-    width: 44px;
-    height: 44px;
+    right: 12px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #0B0B0B;
+    background: #00A878;
     color: #ffffff;
-    border-radius: 12px;
-    text-decoration: none;
+    border: none;
+    border-radius: 10px;
+    font-family: "Cairo", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
     transition: all 0.3s ease;
     z-index: 2;
 }
 
-.pro-cart-btn:hover {
-    background: #C7F000;
-    color: #0B0B0B;
-    transform: scale(1.05);
+.pro-order-btn:hover {
+    background: #008F65;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 168, 120, 0.3);
 }
 
-.pro-cart-btn svg {
-    width: 20px;
-    height: 20px;
+.pro-order-btn:active {
+    transform: translateY(0);
 }
 
 /* =========================================================
@@ -845,7 +848,7 @@ button.white {
     }
 
     .products-section .pro .des {
-        padding: 0 2px 55px;
+        padding: 0 2px 50px;
     }
 
     .pro-category {
@@ -875,17 +878,13 @@ button.white {
         font-size: 15px;
     }
 
-    .pro-cart-btn {
-        width: 38px;
-        height: 38px;
+    .pro-order-btn {
+        height: 36px;
         bottom: 8px;
         left: 8px;
-        border-radius: 10px;
-    }
-
-    .pro-cart-btn svg {
-        width: 16px;
-        height: 16px;
+        right: 8px;
+        font-size: 12px;
+        border-radius: 8px;
     }
 }
 
