@@ -13,6 +13,17 @@
     <link rel="preconnect" href="https://firestore.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="css/style1.css">
+    <style>
+        /* ✅ منع Flash عند التحميل */
+        .pro-container {
+            min-height: 400px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .pro-container.loaded {
+            opacity: 1;
+        }
+    </style>
     <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
 </head>
 
@@ -339,6 +350,13 @@
                     discounted.push({ id: d.id, p });
                 } else {
                     normal.push({ id: d.id, p });
+                }
+                
+            });
+                        // ✅ أظهر بعد التحميل
+            document.querySelectorAll('.pro-container').forEach(c => {
+                if (c.children.length > 0 && !c.querySelector('.skeleton')) {
+                    c.classList.add('loaded');
                 }
             });
         

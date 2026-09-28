@@ -10,6 +10,28 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style1.css">
+    <style>
+        /* ✅ منع التداخل عند التحميل */
+        #prodetails,
+        .product-highlights,
+        .product-details-section,
+        .testimonials-wheel {
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+    
+        body.loaded #prodetails,
+        body.loaded .product-highlights,
+        body.loaded .product-details-section,
+        body.loaded .testimonials-wheel {
+            opacity: 1;
+        }
+    
+        /* ✅ مساحة مؤقتة لمنع القفز */
+        #prodetails {
+            min-height: 400px;
+        }
+    </style>
    
     <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
 </head>
@@ -495,6 +517,7 @@
         
         if (!id) {
             document.querySelector('#prodetails').innerHTML = '<p style="text-align:center;padding:60px;width:100%;">الرجاء اختيار منتج من المتجر</p>';
+            document.body.classList.add('loaded');
         } else {
             getDoc(doc(db, 'products', id)).then((snap) => {
                 if (!snap.exists()) {
@@ -713,10 +736,15 @@
                 if (reviewsList.length > 0 && window.initTestimonialsWheel) {
                     window.initTestimonialsWheel();
                 }
+
+                                // ✅ أظهر الصفحة بعد تحميل كل البيانات
+                document.body.classList.add('loaded');
         
             }).catch(err => {
-                console.error('Firebase error:', err);
-            });
+        console.error('Firebase error:', err);
+        document.body.classList.add('loaded'); // ✅ أظهر حتى لو فيه خطأ
+    });
+            
         }
         </script>
     
