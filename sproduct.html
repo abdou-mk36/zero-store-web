@@ -750,6 +750,195 @@
     </div>
 
     <script src="js/script.js"></script>
+
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        
+        const firebaseConfig = {
+          apiKey: "AIzaSyAow12ZmlBvMGubA6807hMOBIW4QA1ZFYE",
+          authDomain: "zero-store-dz.firebaseapp.com",
+          projectId: "zero-store-dz",
+          storageBucket: "zero-store-dz.firebasestorage.app",
+          messagingSenderId: "152683195719",
+          appId: "1:152683195719:web:c3d73ef8a9d6e546a2f062"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        const id = new URLSearchParams(location.search).get('id');
+        
+        if (id) {
+            getDoc(doc(db, 'products', id)).then((snap) => {
+                if (!snap.exists()) return;
+                const p = snap.data();
+        
+                // ============ 1. الصور (السلايدر) ============
+                const images = p.images && p.images.length > 0 ? p.images : ['assets/product/product-photo/photo-product.webp'];
+                const track = document.querySelector('.product-track');
+                if (track) {
+                    track.innerHTML = images.map(img => `
+                        <div class="product-slide">
+                            <img src="${img}" alt="${p.name}">
+                        </div>
+                    `).join('');
+                }
+        
+                // ============ 2. الاسم والوصف ============
+                const titleEl = document.querySelector('.product-title');
+                if (titleEl) titleEl.textContent = p.name;
+        
+                const descEl = document.querySelector('.product-short-description');
+                if (descEl) descEl.textContent = p.description;
+        
+                // ============ 3. التقييم ============
+                const rating = p.rating || 5;
+                const stars = '★'.repeat(Math.round(rating)) + '☆'.repeat(5 - Math.round(rating));
+                
+                const starEl = document.querySelector('.star-rating');
+                if (starEl) starEl.textContent = stars;
+        
+                const ratingNumEl = document.querySelector('.rating-number');
+                if (ratingNumEl) ratingNumEl.textContent = rating;
+        
+                const reviewsEl = document.querySelector('.review-count');
+                if (reviewsEl) reviewsEl.textContent = `(${p.reviewsCount || 0} تقييم)`;
+        
+                // ============ 4. السعر ============
+                const currentPriceEl = document.querySelector('.current-price');
+                if (currentPriceEl) currentPriceEl.textContent = p.price.toLocaleString('ar-DZ') + ' دج';
+        
+                const oldPriceEl = document.querySelector('.old-price');
+                const discountEl = document.querySelector('.discount');
+        
+                if (p.oldPrice) {
+                    if (oldPriceEl) {
+                        oldPriceEl.textContent = p.oldPrice.toLocaleString('ar-DZ') + ' دج';
+                        oldPriceEl.style.display = '';
+                    }
+                    if (discountEl) {
+                        const pct = Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
+                        discountEl.textContent = `خصم ${pct}%`;
+                        discountEl.style.display = '';
+                    }
+                } else {
+                    if (oldPriceEl) oldPriceEl.style.display = 'none';
+                    if (discountEl) discountEl.style.display = 'none';
+                }
+        
+                // ============ 5. الصور Highlights ============
+                const highlights = p.highlights || [];
+                const hlTrack = document.querySelector('.highlights-track');
+                if (hlTrack && highlights.length > 0) {
+                    hlTrack.innerHTML = highlights.map(h => `
+                        <div class="highlight-slide">
+                            <img src="${h.image}" alt="${h.caption || ''}">
+                        </div>
+                    `).join('');
+                }
+        
+                // ============ 6. الكميات ============
+                const quantities = p.quantities || [];
+                const qtyContainer = document.querySelector('.quantity-options');
+                if (qtyContainer && quantities.length > 0) {
+                    qtyContainer.innerHTML = quantities.map((q, i) => `
+                        <label class="qty-option">
+                            <input type="radio" name="quantity" value="${q.value}" data-price="${q.price}" ${i === 0 ? 'checked' : ''}>
+                            <div class="qty-content">
+                                ${q.badge ? `<span class="qty-badge">${q.badge}</span>` : ''}
+                                <span class="qty-number">${q.value}</span>
+                                <span class="qty-price">${q.price.toLocaleString('ar-DZ')} دج</span>
+                            </div>
+                        </label>
+                    `).join('');
+                }
+        
+                // ============ 7. تفاصيل المنتج ============
+                const details = p.details || [];
+                const visibleContainer = document.querySelector('.product-details-visible');
+                const hiddenContainer = document.querySelector('.product-details-hidden');
+        
+                if (visibleContainer && hiddenContainer) {
+                    visibleContainer.innerHTML = '';
+                    hiddenContainer.innerHTML = '';
+        
+                    details.forEach(d => {
+                        const html = `
+                            <div class="detail-item">
+                                <div class="detail-icon">${d.icon}</div>
+                                <div class="detail-content">
+                                    <h3>${d.title}</h3>
+                                    <p>${d.text}</p>
+                                </div>
+                            </div>
+                        `;
+                        if (d.hidden) {
+                            hiddenContainer.innerHTML += html;
+                        } else {
+                            visibleContainer.innerHTML += html;
+                        }
+                    });
+        
+                    // إخفاء زر "عرض المزيد" إن لم توجد تفاصيل مخفية
+                    const showMoreBtn = document.getElementById('showMoreBtn');
+                    if (showMoreBtn) {
+                        showMoreBtn.style.display = details.some(d => d.hidden) ? '' : 'none';
+                    }
+                }
+        
+                // ============ 8. التعليقات ============
+                const reviewsList = p.reviewsList || [];
+                const wheelTrack = document.getElementById('wheelTrack');
+                if (wheelTrack && reviewsList.length > 0) {
+                    wheelTrack.innerHTML = reviewsList.map(r => `
+                        <article class="wheel-card">
+                            <div class="card-rating">${'★'.repeat(r.rating) + '☆'.repeat(5 - r.rating)}</div>
+                            <p class="card-text">"${r.text}"</p>
+                            <div class="card-author">
+                                <span class="author-name">${r.name}</span>
+                                <span class="author-city">${r.city}</span>
+                            </div>
+                        </article>
+                    `).join('');
+                }
+        
+                // ============ 9. تحديث سلة الـ Modal ============
+                const cartImg = document.querySelector('.cart-product-image img');
+                if (cartImg) cartImg.src = images[0];
+        
+                const cartName = document.querySelector('.cart-product-info h4');
+                if (cartName) cartName.textContent = p.name;
+        
+                const cartCategory = document.querySelector('.cart-product-category');
+                if (cartCategory) cartCategory.textContent = p.category || 'منتج';
+        
+                const cartRating = document.querySelector('.cart-product-rating');
+                if (cartRating) cartRating.innerHTML = `${stars} <span>(${p.reviewsCount || 0})</span>`;
+        
+                // تحديث أسعار الكميات في السلة (cart modal)
+                const cartQtyOptions = document.querySelector('.cart-quantity-options');
+                if (cartQtyOptions && quantities.length > 0) {
+                    cartQtyOptions.innerHTML = quantities.map((q, i) => `
+                        <label class="cart-qty-option">
+                            <input type="radio" name="cartQuantity" value="${q.value}" data-price="${q.price}" ${i === 0 ? 'checked' : ''}>
+                            <div class="cart-qty-content">
+                                <span class="cart-qty-number">${q.value}</span>
+                                <span class="cart-qty-label">${q.value === 1 ? 'قطعة' : 'قطع'}</span>
+                                <span class="cart-qty-price">${q.price.toLocaleString('ar-DZ')} دج</span>
+                                ${q.badge ? `<span class="cart-qty-badge">${q.badge}</span>` : ''}
+                            </div>
+                        </label>
+                    `).join('');
+                }
+        
+                // ============ 10. عنوان الصفحة ============
+                document.title = p.name + ' — Zero Store';
+        
+            }).catch(err => console.error('Firebase error:', err));
+        }
+        </script>
     
   
   
