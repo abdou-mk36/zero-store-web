@@ -1025,6 +1025,7 @@ function sendToTelegram(chatId, message) {
 })();
 
 /* إرسال التعليقات */
+/* إرسال التعليقات */
 (function initReviewToTelegram() {
     const form       = document.getElementById('reviewForm');
     const phoneInput = document.getElementById('reviewPhone');
@@ -1041,11 +1042,16 @@ function sendToTelegram(chatId, message) {
 
         if (!name || !phone || !text) return;
 
+        // ✅ اسم المنتج
+        const productName = window.currentProductName || 'غير محدد';
+
         const stars = "⭐".repeat(parseInt(rating, 10));
 
+        // ✅ 1. Telegram
         const message =
             `💬 *تعليق جديد — Zero Store*\n` +
             `━━━━━━━━━━━━━━━━━━━━\n\n` +
+            `🛍️ *المنتج:* ${productName}\n\n` +
             `👤 *الاسم:* ${name}\n\n` +
             `📞 *الهاتف:* ${phone}\n\n` +
             `⭐ *التقييم:* ${stars} (${rating}/5)\n\n` +
@@ -1055,6 +1061,24 @@ function sendToTelegram(chatId, message) {
 
         sendToTelegram(TELEGRAM_CHAT_REVIEWS, message)
             .catch(err => console.warn('Telegram review error:', err));
+
+        // ✅ 2. Google Sheets
+        const params = new URLSearchParams({
+            type: 'review',                   // ← نوع الطلب
+            productName: productName,
+            name: name,
+            phone: phone,
+            rating: rating,
+            text: text
+        });
+
+        const sheetURL = GOOGLE_SCRIPT_URL + '?' + params.toString();
+
+        fetch(sheetURL, {
+            method: 'GET',
+            mode: 'no-cors',
+            keepalive: true
+        }).catch(err => console.warn('Sheet review error:', err));
     });
 })();
 
