@@ -1244,6 +1244,136 @@ function sendToTelegram(chatId, message) {
 
 
 /* =========================================================
+   CART MODAL — سلة بسيطة
+========================================================= */
+(function initCartModal() {
+
+    const modal = document.getElementById('cartModal');
+    const backdrop = document.getElementById('cartBackdrop');
+    const closeBtn = document.getElementById('cartClose');
+    const continueBtn = document.getElementById('cartContinue');
+    const checkoutBtn = document.getElementById('cartCheckout');
+    const cartTotal = document.getElementById('cartTotal');
+    const qtyOptions = document.querySelectorAll('input[name="cartQuantity"]');
+
+    if (!modal) return;
+
+    // ✅ دالة لحساب الإجمالي
+    function updateTotal() {
+        const selected = document.querySelector('input[name="cartQuantity"]:checked');
+        if (!selected) return;
+
+        const price = parseInt(selected.dataset.price, 10);
+        const formatted = price.toLocaleString('ar-DZ');
+
+        if (cartTotal) {
+            cartTotal.textContent = formatted + ' دج';
+        }
+    }
+
+    // ✅ الاستماع لتغيير الكمية
+    qtyOptions.forEach(option => {
+        option.addEventListener('change', updateTotal);
+    });
+
+    // ✅ فتح السلة (عام — لأي زر)
+    window.openCart = function() {
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        updateTotal();
+    };
+
+    // ✅ إغلاق السلة
+    function closeCart() {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    // ✅ ربط الأحداث
+    if (closeBtn) closeBtn.addEventListener('click', closeCart);
+    if (backdrop) backdrop.addEventListener('click', closeCart);
+    if (continueBtn) continueBtn.addEventListener('click', closeCart);
+
+    // ✅ Escape للإغلاق
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('open')) {
+            closeCart();
+        }
+    });
+
+    // ✅ زر "إتمام الطلب"
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => {
+            const selected = document.querySelector('input[name="cartQuantity"]:checked');
+            if (!selected) return;
+
+            const quantity = selected.value;
+            const price = selected.dataset.price;
+
+            // ✅ احفظ في localStorage
+            try {
+                localStorage.setItem('cartQuantity', quantity);
+                localStorage.setItem('cartPrice', price);
+            } catch (err) {
+                console.warn('Storage error:', err);
+            }
+
+            // ✅ انتقل لصفحة المنتج
+            window.location.href = `sproduct.html?quantity=${quantity}`;
+        });
+    }
+
+    // ✅ ربط أزرار السلة في بطاقات المنتجات
+    document.querySelectorAll('.pro-cart-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            window.openCart();
+        });
+    });
+
+    // ✅ تحديث أولي
+    updateTotal();
+
+})();
+
+
+
+/* =========================================================
+   READ QUANTITY FROM URL — sproduct.html
+========================================================= */
+(function readQuantityFromURL() {
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const quantity = urlParams.get('quantity');
+
+    if (!quantity) return;
+
+    // ✅ ابحث عن حقل الكمية في الاستمارة
+    const qtyInputs = document.querySelectorAll('input[name="quantity"]');
+    if (qtyInputs.length === 0) return;
+
+    // ✅ اختر الكمية المناسبة
+    qtyInputs.forEach(input => {
+        if (input.value === quantity) {
+            input.checked = true;
+        }
+    });
+
+    // ✅ سكرول لاستمارة الطلب بعد ثانية
+    setTimeout(() => {
+        const orderForm = document.getElementById('order-form');
+        if (orderForm) {
+            orderForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, 500);
+
+})();
+
+
+
+
+/* =========================================================
    ORDER SUMMARY — حساب الإجمالي + التحقق من المكتب
 ========================================================= */
 function updateSummary() {
@@ -1360,7 +1490,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.attachOrderSummary();
     }
 });
-
 
 /* =========================================================
    HEADER COMPACT — عند الاستمارة
