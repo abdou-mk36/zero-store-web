@@ -1062,23 +1062,7 @@ function sendToTelegram(chatId, message) {
         sendToTelegram(TELEGRAM_CHAT_REVIEWS, message)
             .catch(err => console.warn('Telegram review error:', err));
 
-        // ✅ 2. Google Sheets
-        const params = new URLSearchParams({
-            type: 'review',                   // ← نوع الطلب
-            productName: productName,
-            name: name,
-            phone: phone,
-            rating: rating,
-            text: text
-        });
-
-        const sheetURL = GOOGLE_SCRIPT_URL + '?' + params.toString();
-
-        fetch(sheetURL, {
-            method: 'GET',
-            mode: 'no-cors',
-            keepalive: true
-        }).catch(err => console.warn('Sheet review error:', err));
+       
     });
 })();
 
