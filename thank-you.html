@@ -423,10 +423,17 @@
     }
 </script>
 <script>
-    // ✅ استرجع المنتج من الرابط
-    const pid = new URLSearchParams(location.search).get('id');
+    const params = new URLSearchParams(location.search);
+    const pid = params.get('id');
+    const slug = params.get('slug');
     const backBtn = document.getElementById('backToProductBtn');
-    if (pid && backBtn) {
+
+    if (slug && backBtn) {
+        // من صفحة هبوط → ارجع لصفحة الهبوط
+        backBtn.href = 'landing.html?slug=' + slug;
+        backBtn.innerHTML = '← العودة للعرض';
+    } else if (pid && backBtn) {
+        // من صفحة منتج → ارجع للمنتج
         backBtn.href = 'sproduct.html?id=' + pid;
     } else if (backBtn) {
         backBtn.href = 'shop.html';
