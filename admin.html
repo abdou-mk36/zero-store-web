@@ -433,9 +433,142 @@ body {
 .save-bar .btn { flex: 1; }
 
 /* ============================================
-   ✅ الحل الحاسم — صفوف عمودية على الهاتف
+   ✅ بلوكات صفحة الهبوط
    ============================================ */
-   @media (max-width: 768px) {
+.block-header {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #E5E5E5;
+    flex-wrap: nowrap !important;
+}
+
+.block-title {
+    font-weight: 700;
+    color: #00A878;
+    font-size: 14px;
+}
+
+.block-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+    flex-wrap: nowrap !important;
+}
+
+.block-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.block-btn.move-up,
+.block-btn.move-down {
+    background: #F0FBF7;
+    color: #00A878;
+    border: 1.5px solid #00A878;
+}
+
+.block-btn.move-up:hover,
+.block-btn.move-down:hover {
+    background: #00A878;
+    color: #fff;
+}
+
+.block-btn.delete {
+    background: #E74C3C;
+    color: #fff;
+}
+
+.block-btn.delete:hover {
+    background: #C0392B;
+}
+
+/* ✅ حل مشكلة الأسهم على الهاتف — specificity عالية */
+.row-item > .block-header,
+#landingBlocks .row-item > .block-header,
+#landingBlocks .row-item > div.block-header {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+}
+
+.row-item > .block-header > .block-actions,
+#landingBlocks .block-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+    width: auto !important;
+    flex-wrap: nowrap !important;
+}
+
+.row-item > .block-header > .block-actions > .block-btn,
+#landingBlocks .block-btn {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    width: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    height: 32px !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* ✅ بلوك الصورة */
+#landingBlocks .row-item:not(.form-block) {
+    background: #F8F8F5 !important;
+    border: 1.5px dashed #CCC !important;
+}
+
+/* ✅ بلوك الاستمارة — مميز */
+#landingBlocks .row-item.form-block {
+    background: linear-gradient(135deg, #EFFBF3 0%, #E0F5EA 100%) !important;
+    border: 2px solid #00A878 !important;
+    box-shadow: 0 4px 15px rgba(0, 168, 120, 0.15) !important;
+}
+
+#landingBlocks .row-item.form-block .block-title {
+    color: #008F65 !important;
+    font-weight: 800 !important;
+    font-size: 15px !important;
+}
+
+#landingBlocks .row-item.form-block .block-header {
+    border-bottom-color: #A8E6C8 !important;
+}
+
+/* ✅ product select */
+#landingProductId {
+    background: #fff !important;
+    color: #0B0B0B !important;
+    width: 100% !important;
+}
+
+/* ============================================
+   ✅ حل الهاتف — صفوف عمودية
+   ============================================ */
+@media (max-width: 768px) {
     .row-item,
     .row-item.highlight-row,
     .row-item.qty-row,
@@ -501,91 +634,54 @@ body {
         width: 100% !important;
     }
 
+    /* ✅ landing blocks على الهاتف — الأزرار بجانب بعضها */
+    #landingBlocks .row-item {
+        padding: 14px !important;
+        padding-top: 14px !important;
+    }
+
+    #landingBlocks .row-item > .block-header,
+    #landingBlocks .row-item > div.block-header {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+
+    #landingBlocks .row-item > .block-header > div {
+        width: auto !important;
+        margin-bottom: 0 !important;
+        display: flex !important;
+    }
+
+    #landingBlocks .row-item > .block-header > .block-actions,
+    #landingBlocks .block-actions {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 6px !important;
+        width: auto !important;
+        flex-shrink: 0 !important;
+    }
+
+    #landingBlocks .block-btn {
+        position: static !important;
+        top: auto !important;
+        left: auto !important;
+        width: 32px !important;
+        min-width: 32px !important;
+        max-width: 32px !important;
+        height: 32px !important;
+        flex-shrink: 0 !important;
+    }
+
     /* منع تجاوز الصفحة */
     body, html {
         overflow-x: hidden !important;
         max-width: 100vw !important;
     }
-}
-/* ============================================
-   ✅ بلوكات صفحة الهبوط — رأس + أزرار
-   ============================================ */
-   .block-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    padding-bottom: 10px;
-    border-bottom: 1px dashed #E5E5E5;
-}
-
-.block-title {
-    font-weight: 700;
-    color: #00A878;
-    font-size: 14px;
-}
-
-.block-actions {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-}
-
-.block-btn {
-    width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-}
-
-.block-btn.move-up,
-.block-btn.move-down {
-    background: #F0FBF7;
-    color: #00A878;
-    border: 1.5px solid #00A878;
-}
-
-.block-btn.move-up:hover,
-.block-btn.move-down:hover {
-    background: #00A878;
-    color: #fff;
-}
-
-.block-btn.delete {
-    background: #E74C3C;
-    color: #fff;
-}
-
-.block-btn.delete:hover {
-    background: #C0392B;
-}
-
-/* ✅ تعطيل التنسيق القديم للأزرار في بلوكات landing */
-#landingBlocks .row-item .block-btn {
-    position: static !important;
-    width: 32px !important;
-    height: 32px !important;
-    top: auto !important;
-    left: auto !important;
-}
-
-#landingBlocks .row-item {
-    padding: 14px !important;
-    padding-top: 14px !important;
-}
-
-#landingProductId {
-    background: #fff !important;
-    color: #0B0B0B !important;
-    width: 100% !important;
 }
 
 /* Mobile */
@@ -615,76 +711,6 @@ body {
 
     .save-bar { padding: 10px 12px; bottom: 10px; }
     .save-bar .btn { font-size: 13px; padding: 11px 14px; }
-}
-/* ============================================
-   ✅ إصلاح إجباري — يعلو فوق كل شيء
-   ============================================ */
-   @media (max-width: 768px) {
-
-.row-item,
-.row-item.highlight-row,
-.row-item.qty-row,
-.row-item.detail-row,
-.row-item.review-row {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-    padding: 16px !important;
-    padding-top: 50px !important;
-    position: relative !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
-}
-
-.row-item > div {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    display: block !important;
-    box-sizing: border-box !important;
-}
-
-.row-item > div > div {
-    width: 100% !important;
-    max-width: 100% !important;
-    display: block !important;
-    box-sizing: border-box !important;
-}
-
-.row-item input,
-.row-item input[type="text"],
-.row-item input[type="number"],
-.row-item textarea,
-.row-item select {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    box-sizing: border-box !important;
-    display: block !important;
-}
-
-.row-remove {
-    position: absolute !important;
-    top: 10px !important;
-    left: 10px !important;
-    width: 32px !important;
-    height: 32px !important;
-    z-index: 10 !important;
-}
-
-.row-item.detail-row .d-hidden-wrap {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 10px !important;
-    background: #fff !important;
-    padding: 10px 12px !important;
-    border-radius: 8px !important;
-    border: 1.5px solid #E5E5E5 !important;
-    width: 100% !important;
-}
 }
 </style>
 </head>
@@ -722,7 +748,7 @@ body {
 
     <div class="dashboard">
 
-            <!-- Tabs -->
+        <!-- Tabs -->
         <div class="tabs">
             <button class="tab active" data-tab="add">➕ إضافة منتج</button>
             <button class="tab" data-tab="list">📦 المنتجات</button>
@@ -740,7 +766,6 @@ body {
                 <form id="productForm">
                     <input type="hidden" id="productId">
 
-                    <!-- المعلومات الأساسية -->
                     <div class="section-title">📝 المعلومات الأساسية</div>
 
                     <div class="field">
@@ -785,7 +810,6 @@ body {
                         </div>
                     </div>
 
-                    <!-- الصور -->
                     <div class="section-title">🖼️ صور المنتج (4 صور)</div>
                     <div class="form-row">
                         <div class="field">
@@ -808,27 +832,22 @@ body {
                         </div>
                     </div>
 
-                    <!-- Highlights -->
                     <div class="section-title">✨ صور Highlights</div>
                     <div id="highlightsContainer"></div>
                     <button type="button" class="btn btn-add" onclick="addHighlightRow()">+ إضافة Highlight</button>
 
-                    <!-- الكميات -->
                     <div class="section-title">💰 الكميات والأسعار</div>
                     <div id="quantitiesContainer"></div>
                     <button type="button" class="btn btn-add" onclick="addQuantityRow()">+ إضافة كمية</button>
 
-                    <!-- التفاصيل -->
                     <div class="section-title">📋 تفاصيل المنتج</div>
                     <div id="detailsContainer"></div>
                     <button type="button" class="btn btn-add" onclick="addDetailRow()">+ إضافة تفصيل</button>
 
-                    <!-- التعليقات -->
                     <div class="section-title">💬 تعليقات الزبائن</div>
                     <div id="reviewsContainer"></div>
                     <button type="button" class="btn btn-add" onclick="addReviewRow()">+ إضافة تعليق</button>
 
-                    <!-- Save bar -->
                     <div class="save-bar">
                         <button type="submit" class="btn btn-primary" id="submitBtn">💾 حفظ المنتج</button>
                         <button type="button" class="btn btn-secondary" id="cancelBtn" style="display:none;">إلغاء</button>
@@ -848,69 +867,66 @@ body {
             </div>
         </div>
 
-    </div>
-    <!-- ============ TAB: LANDINGS ============ -->
-<div class="tab-content" id="tab-landings">
+        <!-- ============ TAB: LANDINGS ============ -->
+        <div class="tab-content" id="tab-landings">
 
-    <!-- قائمة الصفحات -->
-    <div class="card">
-        <div class="card-title">🎯 صفحات الهبوط</div>
-        <div class="card-subtitle">صفحات تسويقية مرتبطة بالمنتجات</div>
+            <div class="card">
+                <div class="card-title">🎯 صفحات الهبوط</div>
+                <div class="card-subtitle">صفحات تسويقية مرتبطة بالمنتجات</div>
 
-        <button type="button" class="btn btn-primary" onclick="showLandingForm()" style="width:100%; margin-bottom:15px;">
-            ➕ إنشاء صفحة هبوط جديدة
-        </button>
+                <button type="button" class="btn btn-primary" onclick="showLandingForm()" style="width:100%; margin-bottom:15px;">
+                    ➕ إنشاء صفحة هبوط جديدة
+                </button>
 
-        <div id="landingsList">
-            <div class="empty"><div class="icon">⏳</div><p>جارٍ التحميل...</p></div>
+                <div id="landingsList">
+                    <div class="empty"><div class="icon">⏳</div><p>جارٍ التحميل...</p></div>
+                </div>
+            </div>
+
+            <div class="card" id="landingFormCard" style="display:none;">
+                <div class="card-title" id="landingFormTitle">➕ إنشاء صفحة هبوط</div>
+                <div class="card-subtitle">اربطها بمنتج وأضف الصور والاستمارة</div>
+
+                <div id="landingMessage" class="message"></div>
+
+                <form id="landingForm">
+                    <input type="hidden" id="landingId">
+
+                    <div class="field">
+                        <label>اسم الصفحة (داخلي فقط) *</label>
+                        <input type="text" id="landingName" required placeholder="عرض رمضان 2026">
+                    </div>
+
+                    <div class="field">
+                        <label>الرابط المختصر (Slug) *</label>
+                        <input type="text" id="landingSlug" required dir="ltr" placeholder="promo-2026">
+                        <small class="help">سيصبح الرابط: /landing.html?slug=promo-2026</small>
+                    </div>
+
+                    <div class="field">
+                        <label>المنتج المرتبط *</label>
+                        <select id="landingProductId" required>
+                            <option value="">-- اختر منتج --</option>
+                        </select>
+                    </div>
+
+                    <div class="section-title">📦 محتوى الصفحة (بلوكات)</div>
+                    <div class="help" style="margin-bottom:10px;">أضف الصور والاستمارة بالترتيب المطلوب</div>
+
+                    <div id="landingBlocks"></div>
+
+                    <button type="button" class="btn btn-add" onclick="addBlock('image')">+ إضافة صورة</button>
+                    <button type="button" class="btn btn-add" onclick="addBlock('form')" style="margin-top:6px;">+ إضافة استمارة الطلب</button>
+
+                    <div class="save-bar">
+                        <button type="submit" class="btn btn-primary" id="landingSubmitBtn">💾 حفظ الصفحة</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideLandingForm()">إلغاء</button>
+                    </div>
+                </form>
+            </div>
+
         </div>
     </div>
-
-    <!-- نموذج الإنشاء/التعديل -->
-    <div class="card" id="landingFormCard" style="display:none;">
-        <div class="card-title" id="landingFormTitle">➕ إنشاء صفحة هبوط</div>
-        <div class="card-subtitle">اربطها بمنتج وأضف الصور والاستمارة</div>
-
-        <div id="landingMessage" class="message"></div>
-
-        <form id="landingForm">
-            <input type="hidden" id="landingId">
-
-            <div class="field">
-                <label>اسم الصفحة (داخلي فقط) *</label>
-                <input type="text" id="landingName" required placeholder="عرض رمضان 2026">
-            </div>
-
-            <div class="field">
-                <label>الرابط المختصر (Slug) *</label>
-                <input type="text" id="landingSlug" required dir="ltr" placeholder="promo-2026">
-                <small class="help">سيصبح الرابط: /landing.html?slug=promo-2026</small>
-            </div>
-
-            <div class="field">
-                <label>المنتج المرتبط *</label>
-                <select id="landingProductId" required>
-                    <option value="">-- اختر منتج --</option>
-                </select>
-            </div>
-
-            <!-- البلوكات -->
-            <div class="section-title">📦 محتوى الصفحة (بلوكات)</div>
-            <div class="help" style="margin-bottom:10px;">أضف الصور والاستمارة بالترتيب المطلوب</div>
-
-            <div id="landingBlocks"></div>
-
-            <button type="button" class="btn btn-add" onclick="addBlock('image')">+ إضافة صورة</button>
-            <button type="button" class="btn btn-add" onclick="addBlock('form')" style="margin-top:6px;">+ إضافة استمارة الطلب</button>
-
-            <div class="save-bar">
-                <button type="submit" class="btn btn-primary" id="landingSubmitBtn">💾 حفظ الصفحة</button>
-                <button type="button" class="btn btn-secondary" onclick="hideLandingForm()">إلغاء</button>
-            </div>
-        </form>
-    </div>
-
-</div>
 </div>
 
 <script type="module">
@@ -1185,7 +1201,6 @@ $('productForm').addEventListener('submit', async (e) => {
             showFormMessage('✅ تمت إضافة المنتج', 'success');
         }
         resetForm();
-        // الانتقال للتاب الثاني
         document.querySelector('[data-tab="list"]').click();
     } catch (err) {
         showFormMessage('❌ ' + err.message, 'error');
@@ -1231,10 +1246,8 @@ async function editProduct(id) {
     $('submitBtn').textContent = '💾 تحديث المنتج';
     $('cancelBtn').style.display = 'inline-block';
 
-    // ✅ إصلاح تنسيق الصفوف على الهاتف
     setTimeout(fixMobileRows, 100);
 
-    // انتقل لتاب الإضافة
     document.querySelector('[data-tab="add"]').click();
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -1275,18 +1288,15 @@ function showFormMessage(text, type) {
 
 /* ============ INIT DEFAULT ROWS ============ */
 function initDefaultRows() {
-    // 4 highlights
     addHighlightRow('', '');
     addHighlightRow('', '');
     addHighlightRow('', '');
     addHighlightRow('', '');
 
-    // 3 quantities
     addQuantityRow(1, '', '');
     addQuantityRow(2, '', '-10%');
     addQuantityRow(3, '', '-25%');
 
-    // 8 details
     addDetailRow('📏', 'المقاسات', '', false);
     addDetailRow('🌹', 'المواد المستخدمة', '', false);
     addDetailRow('⚡', 'الإضاءة', '', false);
@@ -1299,27 +1309,30 @@ function initDefaultRows() {
 
 initDefaultRows();
 
-/* ✅ إصلاح إجباري للهاتف */
+/* ✅ إصلاح إجباري للهاتف (للمنتجات فقط) */
 function fixMobileRows() {
     if (window.innerWidth > 768) return;
     document.querySelectorAll('.row-item').forEach(el => {
+        // تجاهل بلوكات landing
+        if (el.closest('#landingBlocks')) return;
+
         el.style.display = 'block';
         el.style.padding = '14px';
         el.style.paddingTop = '50px';
         el.style.position = 'relative';
-        
+
         el.querySelectorAll(':scope > div').forEach(div => {
             div.style.display = 'block';
             div.style.width = '100%';
             div.style.marginBottom = '12px';
         });
-        
+
         el.querySelectorAll('input').forEach(inp => {
             inp.style.width = '100%';
             inp.style.boxSizing = 'border-box';
             inp.style.display = 'block';
         });
-        
+
         const rm = el.querySelector('.row-remove');
         if (rm) {
             rm.style.position = 'absolute';
@@ -1329,7 +1342,6 @@ function fixMobileRows() {
     });
 }
 
-// شغّلها بعد كل إضافة صف جديد
 const _q = addQuantityRow, _d = addDetailRow, _h = addHighlightRow, _r = addReviewRow;
 window.addQuantityRow = function(...a) { _q.apply(this, a); fixMobileRows(); };
 window.addDetailRow = function(...a) { _d.apply(this, a); fixMobileRows(); };
@@ -1343,12 +1355,10 @@ window.addEventListener('resize', fixMobileRows);
 
 let allProducts = [];
 
-// ✅ تحديث عند الضغط على تبويب landing
 document.querySelector('[data-tab="landings"]').addEventListener('click', () => {
     loadLandings();
 });
 
-// ✅ عرض/إخفاء النموذج
 window.showLandingForm = function() {
     $('landingFormCard').style.display = 'block';
     $('landingFormTitle').textContent = '➕ إنشاء صفحة هبوط';
@@ -1366,7 +1376,6 @@ window.hideLandingForm = function() {
     $('landingMessage').className = 'message';
 };
 
-// ✅ تحميل المنتجات في القائمة المنسدلة
 function loadProductsInSelect() {
     const select = $('landingProductId');
     select.innerHTML = '<option value="">-- اختر منتج --</option>';
@@ -1375,7 +1384,6 @@ function loadProductsInSelect() {
     });
 }
 
-// ✅ إضافة بلوك
 window.addBlock = function(type, data = {}) {
     const container = $('landingBlocks');
     const id = 'block-' + Date.now() + Math.random().toString(36).substr(2, 5);
@@ -1401,6 +1409,7 @@ window.addBlock = function(type, data = {}) {
             </div>
         `;
     } else if (type === 'form') {
+        div.classList.add('form-block');
         div.innerHTML = `
             <div class="block-header">
                 <span class="block-title">📝 استمارة الطلب</span>
@@ -1410,14 +1419,15 @@ window.addBlock = function(type, data = {}) {
                     <button type="button" class="block-btn delete" onclick="this.closest('.row-item').remove()">×</button>
                 </div>
             </div>
-            <p style="font-size:12px; color:#666; margin:0;">سيتم عرض الاستمارة هنا (نفس استمارة sproduct)</p>
+            <div style="text-align:center; padding:14px; background:#fff; border-radius:10px; border:1.5px dashed #00A878;">
+                <span style="font-size:13px; color:#00A878; font-weight:800;">📍 استمارة الطلب ستظهر هنا</span>
+            </div>
         `;
     }
 
     container.appendChild(div);
 };
 
-// ✅ نقل البلوك (فوق/تحت)
 window.moveBlock = function(btn, direction) {
     const block = btn.closest('.row-item');
     const parent = block.parentElement;
@@ -1434,7 +1444,6 @@ window.moveBlock = function(btn, direction) {
     }
 };
 
-// ✅ تحميل الصفحات
 function loadLandings() {
     onSnapshot(collection(db, 'landings'), (snapshot) => {
         if (snapshot.empty) {
@@ -1468,7 +1477,6 @@ function loadLandings() {
     });
 }
 
-// ✅ نسخ الرابط
 window.copyLandingLink = function(slug) {
     const url = location.origin + '/landing.html?slug=' + slug;
     navigator.clipboard.writeText(url).then(() => {
@@ -1476,7 +1484,6 @@ window.copyLandingLink = function(slug) {
     });
 };
 
-// ✅ تعديل صفحة
 async function editLanding(id) {
     const snap = await getDoc(doc(db, 'landings', id));
     if (!snap.exists()) return;
@@ -1499,7 +1506,6 @@ async function editLanding(id) {
     window.scrollTo({ top: $('landingFormCard').offsetTop - 100, behavior: 'smooth' });
 }
 
-// ✅ حذف صفحة
 async function deleteLanding(id) {
     if (!confirm('هل أنت متأكد من حذف هذه الصفحة؟')) return;
     try {
@@ -1509,7 +1515,6 @@ async function deleteLanding(id) {
     }
 }
 
-// ✅ حفظ الصفحة
 $('landingForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const id = $('landingId').value;
@@ -1525,7 +1530,6 @@ $('landingForm').addEventListener('submit', async (e) => {
         }
     });
 
-    // التحقق
     if (blocks.length === 0) {
         showLandingMessage('❌ أضف على الأقل صورة واحدة', 'error');
         return;
@@ -1567,7 +1571,6 @@ $('landingForm').addEventListener('submit', async (e) => {
     }
 });
 
-// ✅ رسالة الصفحة
 function showLandingMessage(text, type) {
     const msg = $('landingMessage');
     msg.textContent = text;
@@ -1575,7 +1578,6 @@ function showLandingMessage(text, type) {
     setTimeout(() => msg.className = 'message', 4000);
 }
 
-// ✅ تحميل المنتجات في الذاكرة
 onSnapshot(collection(db, 'products'), (snapshot) => {
     allProducts = [];
     snapshot.forEach(d => {
