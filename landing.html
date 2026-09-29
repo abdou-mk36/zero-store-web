@@ -377,7 +377,11 @@ function initFormLogic(product, productId) {
 window.scrollToForm = function() {
     const form = document.getElementById('landingOrderForm');
     if (form) {
-        form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const formTop = form.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({
+            top: formTop - 100,
+            behavior: 'smooth'
+        });
     }
 };
 
