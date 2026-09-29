@@ -507,6 +507,86 @@ body {
         max-width: 100vw !important;
     }
 }
+/* ============================================
+   ✅ بلوكات صفحة الهبوط — رأس + أزرار
+   ============================================ */
+   .block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #E5E5E5;
+}
+
+.block-title {
+    font-weight: 700;
+    color: #00A878;
+    font-size: 14px;
+}
+
+.block-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.block-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.block-btn.move-up,
+.block-btn.move-down {
+    background: #F0FBF7;
+    color: #00A878;
+    border: 1.5px solid #00A878;
+}
+
+.block-btn.move-up:hover,
+.block-btn.move-down:hover {
+    background: #00A878;
+    color: #fff;
+}
+
+.block-btn.delete {
+    background: #E74C3C;
+    color: #fff;
+}
+
+.block-btn.delete:hover {
+    background: #C0392B;
+}
+
+/* ✅ تعطيل التنسيق القديم للأزرار في بلوكات landing */
+#landingBlocks .row-item .block-btn {
+    position: static !important;
+    width: 32px !important;
+    height: 32px !important;
+    top: auto !important;
+    left: auto !important;
+}
+
+#landingBlocks .row-item {
+    padding: 14px !important;
+    padding-top: 14px !important;
+}
+
+#landingProductId {
+    background: #fff !important;
+    color: #0B0B0B !important;
+    width: 100% !important;
+}
 
 /* Mobile */
 @media (max-width: 640px) {
@@ -1307,11 +1387,13 @@ window.addBlock = function(type, data = {}) {
 
     if (type === 'image') {
         div.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span style="font-weight:700; color:#00A878;">🖼️ صورة</span>
-                <button type="button" class="row-remove" onclick="moveBlock(this, -1)">↑</button>
-                <button type="button" class="row-remove" onclick="moveBlock(this, 1)">↓</button>
-                <button type="button" class="row-remove" onclick="this.closest('.row-item').remove()">×</button>
+            <div class="block-header">
+                <span class="block-title">🖼️ صورة</span>
+                <div class="block-actions">
+                    <button type="button" class="block-btn move-up" onclick="moveBlock(this, -1)">↑</button>
+                    <button type="button" class="block-btn move-down" onclick="moveBlock(this, 1)">↓</button>
+                    <button type="button" class="block-btn delete" onclick="this.closest('.row-item').remove()">×</button>
+                </div>
             </div>
             <div>
                 <span class="row-label">مسار الصورة</span>
@@ -1320,11 +1402,13 @@ window.addBlock = function(type, data = {}) {
         `;
     } else if (type === 'form') {
         div.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                <span style="font-weight:700; color:#00A878;">📝 استمارة الطلب</span>
-                <button type="button" class="row-remove" onclick="moveBlock(this, -1)">↑</button>
-                <button type="button" class="row-remove" onclick="moveBlock(this, 1)">↓</button>
-                <button type="button" class="row-remove" onclick="this.closest('.row-item').remove()">×</button>
+            <div class="block-header">
+                <span class="block-title">📝 استمارة الطلب</span>
+                <div class="block-actions">
+                    <button type="button" class="block-btn move-up" onclick="moveBlock(this, -1)">↑</button>
+                    <button type="button" class="block-btn move-down" onclick="moveBlock(this, 1)">↓</button>
+                    <button type="button" class="block-btn delete" onclick="this.closest('.row-item').remove()">×</button>
+                </div>
             </div>
             <p style="font-size:12px; color:#666; margin:0;">سيتم عرض الاستمارة هنا (نفس استمارة sproduct)</p>
         `;
