@@ -900,6 +900,34 @@ function sendToTelegram(chatId, message) {
 
     const orderForm = document.querySelector('.order-form');
     if (!orderForm) return;
+               // ✅ تتبع بدء الطلب (TikTok + Meta)
+               let checkoutTracked = false;
+               orderForm.addEventListener('focusin', () => {
+                   if (!checkoutTracked) {
+                       checkoutTracked = true;
+                       const name = window.currentProductName || 'منتج';
+                       const qty = document.querySelector('input[name="quantity"]:checked');
+                       const price = qty ? parseInt(qty.dataset.price) : 0;
+       
+                       // TikTok
+                       if (typeof ttq === 'object') {
+                           ttq.track('InitiateCheckout', {
+                               content_name: name,
+                               currency: 'DZD',
+                               value: price
+                           });
+                       }
+       
+                       // Meta
+                       if (typeof fbq === 'function') {
+                           fbq('track', 'InitiateCheckout', {
+                               content_name: name,
+                               currency: 'DZD',
+                               value: price
+                           });
+                       }
+                   }
+               }, { once: false });
 
        // ✅ التحقق من الهاتف + إخفاء الخطأ عند الكتابة
        const phoneInput = document.getElementById('phone');

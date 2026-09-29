@@ -714,6 +714,26 @@
                 document.title = p.name + ' — Zero Store';
                         // ✅ احفظ معرف المنتج للاستخدام في صفحة الشكر
                 window.currentProductId = id;
+                                // ✅ تتبع مشاهدة المنتج في TikTok
+                if (typeof ttq === 'object') {
+                    ttq.track('ViewContent', {
+                        content_id: id,
+                        content_name: p.name,
+                        content_type: 'product',
+                        currency: 'DZD',
+                        value: p.price
+                    });
+                }
+                                // ✅ تتبع مشاهدة المنتج في Meta
+                if (typeof fbq === 'function') {
+                    fbq('track', 'ViewContent', {
+                        content_ids: [id],
+                        content_name: p.name,
+                        content_type: 'product',
+                        currency: 'DZD',
+                        value: p.price
+                    });
+                }
                         // ✅ احفظ اسم المنتج للاستخدام في الطلب
                  window.currentProductName = p.name;
                 
