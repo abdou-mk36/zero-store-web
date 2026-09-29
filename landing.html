@@ -374,12 +374,12 @@ function initFormLogic(product, productId) {
     }
 }
 
-function scrollToForm() {
+window.scrollToForm = function() {
     const form = document.getElementById('landingOrderForm');
     if (form) {
         form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-}
+};
 
 function observeFormVisibility() {
     const form = document.getElementById('landingOrderForm');
