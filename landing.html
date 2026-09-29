@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -12,7 +12,6 @@
     <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
 
     <style>
-        /* ✅ إخفاء الهيدر والفوتر */
         body.landing-page #header,
         body.landing-page .shipping-bar,
         body.landing-page .site-footer,
@@ -27,16 +26,14 @@
             margin: 0;
         }
 
-        /* ✅ البلوكات */
         .landing-blocks {
             width: 100%;
             max-width: 600px;
             margin: 0 auto;
-            padding: 0;
+            padding: 0 0 90px;
             box-sizing: border-box;
         }
 
-        /* ✅ الصور — بعرض كامل */
         .landing-image {
             width: 100%;
             display: block;
@@ -49,18 +46,14 @@
             width: 100%;
             height: auto;
             display: block;
-            margin: 0;
-            padding: 0;
         }
 
-        /* ✅ حاوية الاستمارة */
         .landing-form-wrapper {
             width: 100%;
             padding: 15px;
             box-sizing: border-box;
         }
 
-        /* ✅ زر الطلب الثابت */
         .landing-fixed-btn {
             position: fixed;
             bottom: 15px;
@@ -85,11 +78,6 @@
             font-weight: 700;
             cursor: pointer;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s ease;
-        }
-
-        .landing-fixed-btn button:active {
-            transform: scale(0.98);
         }
 
         .landing-fixed-btn.hide {
@@ -98,7 +86,6 @@
             pointer-events: none;
         }
 
-        /* ✅ Loading */
         .landing-loading {
             display: flex;
             align-items: center;
@@ -117,9 +104,7 @@
             animation: spin 0.8s linear infinite;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .landing-error {
             text-align: center;
@@ -138,31 +123,58 @@
             font-size: 14px;
             margin: 0;
         }
-
-        /* ✅ إضافة padding أسفل الصفحة للزر الثابت */
-        .landing-blocks {
-            padding-bottom: 90px;
-        }
     </style>
 </head>
 <body class="landing-page">
 
-    <!-- ✅ Loading -->
     <div class="landing-loading" id="loading">
         <div class="landing-spinner"></div>
         <p style="font-family:Cairo; color:#666;">جارٍ التحميل...</p>
     </div>
 
-    <!-- ✅ المحتوى -->
     <div class="landing-blocks" id="landingContent" style="display:none;"></div>
 
-    <!-- ✅ زر الطلب الثابت -->
     <div class="landing-fixed-btn" id="orderBtn">
-        <button type="button" onclick="scrollToForm()">
-            اطلب الآن
-        </button>
+        <button type="button" onclick="scrollToForm()">اطلب الآن</button>
     </div>
 
+<!-- ✅ إعدادات الاستمارة -->
+<script>
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwx2Tb1ntk35MmnhfCGDBXGlg8jjHGHdJIA9Pu_J93bWyjndp6jahop9H4wR-5Xr3EK/exec";
+const TELEGRAM_BOT_TOKEN = "8837412883:AAEWdgFNZ221Ja2BPyilV5y1X5EQ8yXpMWk";
+const TELEGRAM_CHAT_ORDERS = "-1004491843696";
+
+const DELIVERY_HOME = {
+    "01":1650,"02":950,"03":950,"04":700,"05":750,"06":800,"07":800,"08":1150,"09":900,"10":800,
+    "11":1650,"12":700,"13":950,"14":950,"15":850,"16":850,"17":900,"18":750,"19":750,"20":950,
+    "21":700,"22":1100,"23":650,"24":650,"25":700,"26":850,"27":950,"28":850,"29":950,"30":1000,
+    "31":1050,"32":1000,"33":0,"34":850,"35":850,"36":500,"37":0,"38":950,"39":950,"40":750,
+    "41":650,"42":850,"43":800,"44":850,"45":1200,"46":950,"47":950,"48":950,"49":1650,"50":0,
+    "51":950,"52":1200,"53":2000,"54":0,"55":950,"56":0,"57":850,"58":1150,"59":0,"60":0,
+    "61":0,"62":0,"63":0,"64":0,"65":0,"66":0,"67":0,"68":0,"69":0
+};
+
+const DELIVERY_OFFICE = {
+    "01":800,"02":450,"03":450,"04":400,"05":400,"06":450,"07":450,"08":550,"09":450,"10":450,
+    "11":800,"12":400,"13":550,"14":500,"15":450,"16":450,"17":450,"18":400,"19":400,"20":50,
+    "21":400,"22":550,"23":400,"24":400,"25":400,"26":450,"27":500,"28":450,"29":500,"30":500,
+    "31":500,"32":500,"33":0,"34":400,"35":450,"36":400,"37":0,"38":450,"39":450,"40":400,
+    "41":400,"42":450,"43":400,"44":450,"45":550,"46":550,"47":500,"48":500,"49":600,"50":0,
+    "51":450,"52":600,"53":600,"54":0,"55":450,"56":0,"57":450,"58":550,"59":0,"60":0,
+    "61":0,"62":0,"63":0,"64":0,"65":0,"66":0,"67":0,"68":0,"69":0
+};
+
+function sendToTelegram(chatId, message) {
+    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+    return fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: 'Markdown' })
+    }).then(res => res.json());
+}
+</script>
+
+<!-- ✅ Firebase + منطق الصفحة -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, query, where, getDocs, doc, getDoc }
@@ -179,39 +191,20 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
 const slug = new URLSearchParams(location.search).get('slug');
 
 async function initLanding() {
-    if (!slug) {
-        showError('الرابط غير صالح');
-        return;
-    }
-
+    if (!slug) { showError('الرابط غير صالح'); return; }
     try {
         const q = query(collection(db, 'landings'), where('slug', '==', slug));
         const snap = await getDocs(q);
-
-        if (snap.empty) {
-            showError('الصفحة غير موجودة');
-            return;
-        }
+        if (snap.empty) { showError('الصفحة غير موجودة'); return; }
 
         const landingData = snap.docs[0].data();
-        const productId = landingData.productId;
+        const productSnap = await getDoc(doc(db, 'products', landingData.productId));
+        if (!productSnap.exists()) { showError('المنتج غير موجود'); return; }
 
-        // جلب بيانات المنتج
-        const productSnap = await getDoc(doc(db, 'products', productId));
-        if (!productSnap.exists()) {
-            showError('المنتج غير موجود');
-            return;
-        }
-
-        const product = productSnap.data();
-
-        // بناء الصفحة
-        renderLanding(landingData, product, productId);
-
+        renderLanding(landingData, productSnap.data(), landingData.productId);
     } catch (err) {
         console.error(err);
         showError('حدث خطأ في التحميل');
@@ -239,19 +232,13 @@ function renderLanding(landing, product, productId) {
     document.getElementById('loading').style.display = 'none';
     content.style.display = 'block';
     document.title = landing.name + ' — Zero Store';
-
-    // تهيئة الاستمارة
     initFormLogic(product, productId);
-
-    // مراقبة الاستمارة لإخفاء الزر
     observeFormVisibility();
 }
 
 function buildOrderForm(product, productId) {
-    const quantities = product.quantities || [];
-    const qtyOptions = quantities.length > 0 ? quantities : [
-        { value: 1, price: product.price, badge: '' }
-    ];
+    const quantities = product.quantities && product.quantities.length > 0
+        ? product.quantities : [{ value: 1, price: product.price, badge: '' }];
 
     return `
         <form class="order-form" id="landingOrderForm">
@@ -266,7 +253,7 @@ function buildOrderForm(product, productId) {
                 <div class="form-group">
                     <label for="phone">رقم الهاتف</label>
                     <input type="tel" id="phone" placeholder="07 75 45 09 63" inputmode="tel">
-                    <small id="phoneError" style="display:none; color:#E74C3C; font-family:Cairo,sans-serif; font-size:12px; font-weight:600; margin-top:6px;"></small>
+                    <small id="phoneError" style="display:none;color:#E74C3C;font-family:Cairo,sans-serif;font-size:12px;font-weight:600;margin-top:6px;"></small>
                 </div>
             </div>
 
@@ -302,7 +289,7 @@ function buildOrderForm(product, productId) {
             <div class="form-group">
                 <label>الكمية</label>
                 <div class="quantity-options">
-                    ${qtyOptions.map((q, i) => `
+                    ${quantities.map((q, i) => `
                         <label class="qty-option">
                             <input type="radio" name="quantity" value="${q.value}" data-price="${q.price}" ${i === 0 ? 'checked' : ''}>
                             <div class="qty-content">
@@ -325,29 +312,20 @@ function buildOrderForm(product, productId) {
                 <strong id="summaryTotal">-- دج</strong>
             </div>
 
-            <button type="submit" class="confirm-order-btn">
-                تأكيد الطلب
-            </button>
+            <button type="submit" class="confirm-order-btn">تأكيد الطلب</button>
         </form>
     `;
 }
 
 function generateWilayaOptions() {
     const wilayas = [
-        "01|أدرار","02|الشلف","03|الأغواط","04|أم البواقي","05|باتنة",
-        "06|بجاية","07|بسكرة","08|بشار","09|البليدة","10|البويرة",
-        "11|تمنراست","12|تبسة","13|تلمسان","14|تيارت","15|تيزي وزو",
-        "16|الجزائر","17|الجلفة","18|جيجل","19|سطيف","20|سعيدة",
-        "21|سكيكدة","22|سيدي بلعباس","23|عنابة","24|قالمة","25|قسنطينة",
-        "26|المدية","27|مستغانم","28|المسيلة","29|معسكر","30|ورقلة",
-        "31|وهران","32|البيض","33|إليزي","34|برج بوعريريج","35|بومرداس",
-        "36|الطارف","37|تندوف","38|تيسمسيلت","39|الوادي","40|خنشلة",
-        "41|سوق أهراس","42|تيبازة","43|ميلة","44|عين الدفلى","45|النعامة",
-        "46|عين تموشنت","47|غرداية","48|غليزان","49|تيميمون","50|برج باجي مختار",
-        "51|أولاد جلال","52|بني عباس","53|إن صالح","54|إن قزام","55|تقرت",
-        "56|جانت","57|المغير","58|المنيعة","59|أفلو","60|بريكة",
-        "61|القنطرة","62|بئر العاتر","63|العريشة","64|قصر الشلالة","65|عين وسارة",
-        "66|مسعد","67|قصر البخاري","68|بوسعادة","69|الأبيض سيدي الشيخ"
+        "01|أدرار","02|الشلف","03|الأغواط","04|أم البواقي","05|باتنة","06|بجاية","07|بسكرة","08|بشار","09|البليدة","10|البويرة",
+        "11|تمنراست","12|تبسة","13|تلمسان","14|تيارت","15|تيزي وزو","16|الجزائر","17|الجلفة","18|جيجل","19|سطيف","20|سعيدة",
+        "21|سكيكدة","22|سيدي بلعباس","23|عنابة","24|قالمة","25|قسنطينة","26|المدية","27|مستغانم","28|المسيلة","29|معسكر","30|ورقلة",
+        "31|وهران","32|البيض","33|إليزي","34|برج بوعريريج","35|بومرداس","36|الطارف","37|تندوف","38|تيسمسيلت","39|الوادي","40|خنشلة",
+        "41|سوق أهراس","42|تيبازة","43|ميلة","44|عين الدفلى","45|النعامة","46|عين تموشنت","47|غرداية","48|غليزان","49|تيميمون","50|برج باجي مختار",
+        "51|أولاد جلال","52|بني عباس","53|إن صالح","54|إن قزام","55|تقرت","56|جانت","57|المغير","58|المنيعة","59|أفلو","60|بريكة",
+        "61|القنطرة","62|بئر العاتر","63|العريشة","64|قصر الشلالة","65|عين وسارة","66|مسعد","67|قصر البخاري","68|بوسعادة","69|الأبيض سيدي الشيخ"
     ];
     return wilayas.map(w => {
         const [code, name] = w.split('|');
@@ -356,32 +334,169 @@ function generateWilayaOptions() {
 }
 
 function initFormLogic(product, productId) {
-    // ✅ احفظ بيانات المنتج
     window.currentProductName = product.name;
     window.currentProductId = productId;
 
     const form = document.getElementById('landingOrderForm');
     if (!form) return;
 
-    // تحقق من الهاتف
+    const wilayaSelect = document.getElementById('wilaya');
+    const summaryDelivery = document.getElementById('summaryDelivery');
+    const summaryTotal = document.getElementById('summaryTotal');
     const phoneInput = document.getElementById('phone');
     const phoneError = document.getElementById('phoneError');
+
+    const NO_OFFICE_WILAYAS = ["33","37","50","54","56","59","60","61","62","63","64","65","66","67","68","69"];
+
     if (phoneInput && phoneError) {
         phoneInput.addEventListener('input', () => {
             phoneError.style.display = 'none';
             phoneInput.classList.remove('error');
         });
     }
+
+    function updateSummary() {
+        const qtySelected = form.querySelector('input[name="quantity"]:checked');
+        const productPrice = qtySelected ? parseInt(qtySelected.dataset.price, 10) : product.price;
+
+        const deliveryTypeEl = form.querySelector('input[name="deliveryType"]:checked');
+        const deliveryType = deliveryTypeEl ? deliveryTypeEl.value : 'home';
+
+        const wilayaCode = wilayaSelect.value;
+        let deliveryPrice = 0;
+
+        if (wilayaCode) {
+            if (deliveryType === 'office') {
+                deliveryPrice = DELIVERY_OFFICE[wilayaCode] || 0;
+            } else {
+                deliveryPrice = DELIVERY_HOME[wilayaCode] || 0;
+            }
+        }
+
+        const total = productPrice + deliveryPrice;
+
+        if (summaryDelivery) {
+            if (wilayaCode) {
+                summaryDelivery.textContent = deliveryPrice.toLocaleString('ar-DZ') + ' دج';
+                summaryDelivery.style.color = '#00A878';
+            } else {
+                summaryDelivery.textContent = 'اختر الولاية';
+                summaryDelivery.style.color = '#999';
+            }
+        }
+
+        if (summaryTotal) {
+            summaryTotal.textContent = wilayaCode ? total.toLocaleString('ar-DZ') + ' دج' : '-- دج';
+        }
+    }
+
+    function checkOffice() {
+        const wilayaCode = wilayaSelect.value;
+        const officeOption = form.querySelector('input[name="deliveryType"][value="office"]');
+        const homeOption = form.querySelector('input[name="deliveryType"][value="home"]');
+        if (!officeOption || !homeOption) return;
+
+        const officeLabel = officeOption.closest('.delivery-text-option');
+
+        if (!wilayaCode) {
+            if (officeLabel) officeLabel.style.display = '';
+            officeOption.checked = true;
+            return;
+        }
+
+        if (NO_OFFICE_WILAYAS.includes(wilayaCode)) {
+            if (officeLabel) officeLabel.style.display = 'none';
+            homeOption.checked = true;
+        } else {
+            if (officeLabel) officeLabel.style.display = '';
+            officeOption.checked = true;
+        }
+    }
+
+    wilayaSelect.addEventListener('change', () => { checkOffice(); updateSummary(); });
+    form.querySelectorAll('input[name="quantity"]').forEach(i => i.addEventListener('change', updateSummary));
+    form.querySelectorAll('input[name="deliveryType"]').forEach(i => i.addEventListener('change', updateSummary));
+
+    checkOffice();
+    updateSummary();
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('full-name').value.trim();
+        const phone = phoneInput.value.trim();
+        const wilayaText = wilayaSelect.options[wilayaSelect.selectedIndex].text;
+        const wilayaCode = wilayaSelect.value;
+        const address = document.getElementById('address').value.trim();
+
+        if (phone.replace(/\D/g, '').length < 10) {
+            phoneError.textContent = '❌ يرجى إدخال رقم هاتف صحيح';
+            phoneError.style.display = 'block';
+            phoneInput.classList.add('error');
+            phoneInput.focus();
+            return;
+        }
+
+        if (!name || !address || !wilayaCode) {
+            alert('❌ يرجى تعبئة جميع الحقول');
+            return;
+        }
+
+        const deliveryType = form.querySelector('input[name="deliveryType"]:checked').value;
+        const deliveryLabel = deliveryType === 'home' ? 'المنزل' : 'المكتب';
+
+        const qtySelected = form.querySelector('input[name="quantity"]:checked');
+        const quantity = qtySelected ? qtySelected.value : '1';
+        const productPrice = qtySelected ? parseInt(qtySelected.dataset.price, 10) : product.price;
+
+        let deliveryPrice = deliveryType === 'office'
+            ? (DELIVERY_OFFICE[wilayaCode] || 0)
+            : (DELIVERY_HOME[wilayaCode] || 0);
+        const total = productPrice + deliveryPrice;
+
+        const submitBtn = form.querySelector('.confirm-order-btn');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'جارٍ تأكيد طلبك...';
+        }
+
+        const params = new URLSearchParams({
+            productName: product.name, name, phone, wilaya: wilayaText,
+            deliveryType: deliveryLabel, address, quantity,
+            productPrice, deliveryPrice, total
+        });
+
+        fetch(GOOGLE_SCRIPT_URL + '?' + params.toString(), {
+            method: 'GET', mode: 'no-cors', keepalive: true
+        }).catch(() => {});
+
+        sendToTelegram(TELEGRAM_CHAT_ORDERS,
+            `📦 *طلب جديد — Zero Store*\n` +
+            `━━━━━━━━━━━━━━━━━━━━\n\n` +
+            `🛍️ *المنتج:* ${product.name}\n\n` +
+            `👤 *الاسم:* ${name}\n\n` +
+            `📞 *الهاتف:* ${phone}\n\n` +
+            `📍 *الولاية:* ${wilayaText}\n\n` +
+            `🚚 *نوع التوصيل:* ${deliveryLabel}\n\n` +
+            `🔢 *الكمية:* ${quantity}\n\n` +
+            `💰 *المنتج:* ${productPrice.toLocaleString('ar-DZ')} دج\n\n` +
+            `🚛 *التوصيل:* ${deliveryPrice.toLocaleString('ar-DZ')} دج\n\n` +
+            `💵 *الإجمالي:* ${total.toLocaleString('ar-DZ')} دج\n\n` +
+            `🏠 *العنوان:* ${address}`
+        ).then(() => {
+            const pid = window.currentProductId || '';
+            window.location.href = 'thank-you.html' + (pid ? '?id=' + pid : '');
+        }).catch(() => {
+            window.location.href = 'thank-you.html';
+        });
+    });
 }
 
 window.scrollToForm = function() {
     const form = document.getElementById('landingOrderForm');
     if (form) {
         const formTop = form.getBoundingClientRect().top + window.scrollY;
-        window.scrollTo({
-            top: formTop + 100,
-            behavior: 'smooth'
-        });
+        window.scrollTo({ top: formTop + 100, behavior: 'smooth' });
     }
 };
 
@@ -392,11 +507,7 @@ function observeFormVisibility() {
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                btn.classList.add('hide');
-            } else {
-                btn.classList.remove('hide');
-            }
+            btn.classList.toggle('hide', entry.isIntersecting);
         });
     }, { threshold: 0.15 });
 
@@ -441,9 +552,6 @@ fbq('track', 'PageView');
   ttq.page();
 }(window, document, 'ttq');
 </script>
-
-<!-- ✅ script.js -->
-<script src="js/script.js"></script>
 
 </body>
 </html>
