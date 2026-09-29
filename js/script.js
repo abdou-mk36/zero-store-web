@@ -1244,264 +1244,122 @@ function sendToTelegram(chatId, message) {
 
 
 /* =========================================================
-   CART MODAL — سلة بسيطة
-========================================================= */
-(function initCartModal() {
-
-    const modal = document.getElementById('cartModal');
-    const backdrop = document.getElementById('cartBackdrop');
-    const closeBtn = document.getElementById('cartClose');
-    const continueBtn = document.getElementById('cartContinue');
-    const checkoutBtn = document.getElementById('cartCheckout');
-    const cartTotal = document.getElementById('cartTotal');
-    const qtyOptions = document.querySelectorAll('input[name="cartQuantity"]');
-
-    if (!modal) return;
-
-    // ✅ دالة لحساب الإجمالي
-    function updateTotal() {
-        const selected = document.querySelector('input[name="cartQuantity"]:checked');
-        if (!selected) return;
-
-        const price = parseInt(selected.dataset.price, 10);
-        const formatted = price.toLocaleString('ar-DZ');
-
-        if (cartTotal) {
-            cartTotal.textContent = formatted + ' دج';
-        }
-    }
-
-    // ✅ الاستماع لتغيير الكمية
-    qtyOptions.forEach(option => {
-        option.addEventListener('change', updateTotal);
-    });
-
-    // ✅ فتح السلة (عام — لأي زر)
-    window.openCart = function() {
-        modal.classList.add('open');
-        document.body.style.overflow = 'hidden';
-        updateTotal();
-    };
-
-    // ✅ إغلاق السلة
-    function closeCart() {
-        modal.classList.remove('open');
-        document.body.style.overflow = '';
-    }
-
-    // ✅ ربط الأحداث
-    if (closeBtn) closeBtn.addEventListener('click', closeCart);
-    if (backdrop) backdrop.addEventListener('click', closeCart);
-    if (continueBtn) continueBtn.addEventListener('click', closeCart);
-
-    // ✅ Escape للإغلاق
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('open')) {
-            closeCart();
-        }
-    });
-
-    // ✅ زر "إتمام الطلب"
-    if (checkoutBtn) {
-        checkoutBtn.addEventListener('click', () => {
-            const selected = document.querySelector('input[name="cartQuantity"]:checked');
-            if (!selected) return;
-
-            const quantity = selected.value;
-            const price = selected.dataset.price;
-
-            // ✅ احفظ في localStorage
-            try {
-                localStorage.setItem('cartQuantity', quantity);
-                localStorage.setItem('cartPrice', price);
-            } catch (err) {
-                console.warn('Storage error:', err);
-            }
-
-            // ✅ انتقل لصفحة المنتج
-            window.location.href = `sproduct.html?quantity=${quantity}`;
-        });
-    }
-
-    // ✅ ربط أزرار السلة في بطاقات المنتجات
-    document.querySelectorAll('.pro-cart-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            window.openCart();
-        });
-    });
-
-    // ✅ تحديث أولي
-    updateTotal();
-
-})();
-
-
-
-/* =========================================================
-   READ QUANTITY FROM URL — sproduct.html
-========================================================= */
-(function readQuantityFromURL() {
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const quantity = urlParams.get('quantity');
-
-    if (!quantity) return;
-
-    // ✅ ابحث عن حقل الكمية في الاستمارة
-    const qtyInputs = document.querySelectorAll('input[name="quantity"]');
-    if (qtyInputs.length === 0) return;
-
-    // ✅ اختر الكمية المناسبة
-    qtyInputs.forEach(input => {
-        if (input.value === quantity) {
-            input.checked = true;
-        }
-    });
-
-    // ✅ سكرول لاستمارة الطلب بعد ثانية
-    setTimeout(() => {
-        const orderForm = document.getElementById('order-form');
-        if (orderForm) {
-            orderForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    }, 500);
-
-})();
-
-
-
-
-/* =========================================================
    ORDER SUMMARY — حساب الإجمالي + التحقق من المكتب
 ========================================================= */
-(function initOrderSummary() {
-
+function updateSummary() {
     const wilayaSelect = document.getElementById('wilaya');
     const productPriceEl = document.getElementById('summaryProduct');
     const deliveryPriceEl = document.getElementById('summaryDelivery');
     const totalEl = document.getElementById('summaryTotal');
-
     if (!wilayaSelect || !totalEl) return;
 
-    // ✅ الولايات التي لا يوجد فيها مكتب
+    const qtySelected = document.querySelector('input[name="quantity"]:checked');
+    const productPrice = qtySelected ? parseInt(qtySelected.dataset.price, 10) : 2900;
+
+    const deliveryTypeEl = document.querySelector('input[name="deliveryType"]:checked');
+    const deliveryType = deliveryTypeEl ? deliveryTypeEl.value : 'home';
+
+    const wilayaCode = wilayaSelect.value;
+    let deliveryPrice = 0;
+
+    if (wilayaCode) {
+        if (deliveryType === 'office') {
+            deliveryPrice = DELIVERY_OFFICE[wilayaCode] || 0;
+        } else {
+            deliveryPrice = DELIVERY_HOME[wilayaCode] || 0;
+        }
+    }
+
+    const total = productPrice + deliveryPrice;
+
+    if (productPriceEl) {
+        productPriceEl.textContent = productPrice.toLocaleString('ar-DZ') + ' دج';
+    }
+
+    if (deliveryPriceEl) {
+        if (wilayaCode) {
+            deliveryPriceEl.textContent = deliveryPrice.toLocaleString('ar-DZ') + ' دج';
+            deliveryPriceEl.style.color = '#00A878';
+        } else {
+            deliveryPriceEl.textContent = 'اختر الولاية';
+            deliveryPriceEl.style.color = '#999';
+        }
+    }
+
+    if (totalEl) {
+        if (wilayaCode) {
+            totalEl.textContent = total.toLocaleString('ar-DZ') + ' دج';
+        } else {
+            totalEl.textContent = '-- دج';
+        }
+    }
+}
+
+function checkOfficeAvailability() {
+    const wilayaSelect = document.getElementById('wilaya');
+    if (!wilayaSelect) return;
+
+    const wilayaCode = wilayaSelect.value;
+    const officeOption = document.querySelector('input[name="deliveryType"][value="office"]');
+    const homeOption = document.querySelector('input[name="deliveryType"][value="home"]');
+
+    if (!officeOption || !homeOption) return;
+
+    const officeLabel = officeOption.closest('.delivery-text-option');
+
     const NO_OFFICE_WILAYAS = [
         "33", "37", "50", "54", "56", "59", "60",
         "61", "62", "63", "64", "65", "66", "67", "68", "69"
     ];
 
-    function updateSummary() {
-        // 1) سعر المنتج
-        const qtySelected = document.querySelector('input[name="quantity"]:checked');
-        const productPrice = qtySelected ? parseInt(qtySelected.dataset.price, 10) : 2900;
-
-        // 2) نوع التوصيل
-        const deliveryTypeEl = document.querySelector('input[name="deliveryType"]:checked');
-        const deliveryType = deliveryTypeEl ? deliveryTypeEl.value : 'home';
-
-        // 3) سعر التوصيل
-        const wilayaCode = wilayaSelect.value;
-        let deliveryPrice = 0;
-
-        if (wilayaCode) {
-            if (deliveryType === 'office') {
-                deliveryPrice = DELIVERY_OFFICE[wilayaCode] || 0;
-            } else {
-                deliveryPrice = DELIVERY_HOME[wilayaCode] || 0;
-            }
-        }
-
-        // 4) الإجمالي
-        const total = productPrice + deliveryPrice;
-
-        // 5) تحديث العرض
-        if (productPriceEl) {
-            productPriceEl.textContent = productPrice.toLocaleString('ar-DZ') + ' دج';
-        }
-
-        if (deliveryPriceEl) {
-            if (wilayaCode) {
-                deliveryPriceEl.textContent = deliveryPrice.toLocaleString('ar-DZ') + ' دج';
-                deliveryPriceEl.style.color = '#00A878';
-            } else {
-                deliveryPriceEl.textContent = 'اختر الولاية';
-                deliveryPriceEl.style.color = '#999';
-            }
-        }
-
-        if (totalEl) {
-            if (wilayaCode) {
-                totalEl.textContent = total.toLocaleString('ar-DZ') + ' دج';
-            } else {
-                totalEl.textContent = '-- دج';
-            }
-        }
-    }
-
-    // ✅ دالة التحقق من المكتب
-   // ✅ دالة التحقق من المكتب
-function checkOfficeAvailability() {
-    const wilayaCode = wilayaSelect.value;
-    const officeOption = document.querySelector('input[name="deliveryType"][value="office"]');
-    const homeOption = document.querySelector('input[name="deliveryType"][value="home"]');
-    
-    if (!officeOption || !homeOption) return;
-
-    const officeLabel = officeOption.closest('.delivery-text-option');
-    const homeLabel = homeOption.closest('.delivery-text-option');
-
     if (!wilayaCode) {
-        // لم تُختر ولاية بعد — إظهار الكل + المكتب افتراضي
         if (officeLabel) officeLabel.style.display = '';
         officeOption.checked = true;
         return;
     }
 
-    // ✅ إذا كانت الولاية بدون مكتب
     if (NO_OFFICE_WILAYAS.includes(wilayaCode)) {
-        // إخفاء خيار المكتب
-        if (officeLabel) {
-            officeLabel.style.display = 'none';
-        }
-        
-        // ✅ إجبار "المنزل" (الوحيد المتاح)
+        if (officeLabel) officeLabel.style.display = 'none';
         homeOption.checked = true;
     } else {
-        // ✅ إظهار خيار المكتب
-        if (officeLabel) {
-            officeLabel.style.display = '';
-        }
-        
-        // ✅ إجبار "المكتب" كافتراضي
+        if (officeLabel) officeLabel.style.display = '';
         officeOption.checked = true;
     }
 }
 
-    // ✅ الاستماع للتغييرات
-    wilayaSelect.addEventListener('change', () => {
-        checkOfficeAvailability();
-        updateSummary();
-    });
+// ✅ ربط الاستمارة (يعمل مع sproduct و landing)
+window.attachOrderSummary = function() {
+    const wilayaSelect = document.getElementById('wilaya');
+    if (!wilayaSelect) return;
 
-   // ✅ Event Delegation — يعمل مع الكميات المُضافة من Firebase
-document.addEventListener('change', (e) => {
-    if (e.target.name === 'quantity') {
-        updateSummary();
-    }
-});
+    // تنظيف المستمعين القديمة
+    if (wilayaSelect._listener) wilayaSelect.removeEventListener('change', wilayaSelect._listener);
+    const wListener = () => { checkOfficeAvailability(); updateSummary(); };
+    wilayaSelect._listener = wListener;
+    wilayaSelect.addEventListener('change', wListener);
 
-// ✅ اجعل الدالة عامة ليستدعيها Firebase
-window.updateOrderSummary = updateSummary;
-
-    document.querySelectorAll('input[name="deliveryType"]').forEach(input => {
+    document.querySelectorAll('input[name="quantity"]').forEach(input => {
+        if (input._listener) input.removeEventListener('change', input._listener);
+        input._listener = updateSummary;
         input.addEventListener('change', updateSummary);
     });
 
-    // ✅ أول تحديث
+    document.querySelectorAll('input[name="deliveryType"]').forEach(input => {
+        if (input._listener) input.removeEventListener('change', input._listener);
+        input._listener = updateSummary;
+        input.addEventListener('change', updateSummary);
+    });
+
     checkOfficeAvailability();
     updateSummary();
-})();
+};
+
+// ✅ تشغيل تلقائي إذا كانت الاستمارة موجودة (sproduct)
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('wilaya')) {
+        window.attachOrderSummary();
+    }
+});
 
 
 /* =========================================================
