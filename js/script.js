@@ -953,7 +953,8 @@ function sendToTelegram(chatId, message) {
         } else {
             deliveryPrice = DELIVERY_HOME[wilayaCode] || 0;
         }
-
+            // ✅ اسم المنتج
+        const productName = window.currentProductName || 'منتج';
         const total = productPrice + deliveryPrice;
 
         // ✅ تفعيل حالة التحميل
@@ -970,6 +971,7 @@ function sendToTelegram(chatId, message) {
 
         // ✅ 1. Google Sheets
         const params = new URLSearchParams({
+            productName: productName,    // ← جديد
             name: name,
             phone: phone,
             wilaya: wilayaText,
@@ -993,6 +995,7 @@ function sendToTelegram(chatId, message) {
         sendToTelegram(TELEGRAM_CHAT_ORDERS,
             `📦 *طلب جديد — Zero Store*\n` +
             `━━━━━━━━━━━━━━━━━━━━\n\n` +
+            `🛍️ *المنتج:* ${productName}\n\n` +
             `👤 *الاسم:* ${name}\n\n` +
             `📞 *الهاتف:* ${phone}\n\n` +
             `📍 *الولاية:* ${wilayaText}\n\n` +
