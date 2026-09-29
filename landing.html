@@ -379,7 +379,7 @@ window.scrollToForm = function() {
     if (form) {
         const formTop = form.getBoundingClientRect().top + window.scrollY;
         window.scrollTo({
-            top: formTop - 100,
+            top: formTop + 100,
             behavior: 'smooth'
         });
     }
