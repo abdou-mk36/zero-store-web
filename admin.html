@@ -1386,7 +1386,7 @@ function loadLandings() {
 
 // ✅ نسخ الرابط
 window.copyLandingLink = function(slug) {
-    const url = location.origin + location.pathname.replace('admin.html', '') + 'landing.html?slug=' + slug;
+    const url = location.origin + '/landing.html?slug=' + slug;
     navigator.clipboard.writeText(url).then(() => {
         alert('✅ تم نسخ الرابط:\n' + url);
     });
