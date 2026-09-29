@@ -642,10 +642,11 @@ body {
 
     <div class="dashboard">
 
-        <!-- Tabs -->
+            <!-- Tabs -->
         <div class="tabs">
             <button class="tab active" data-tab="add">➕ إضافة منتج</button>
             <button class="tab" data-tab="list">📦 المنتجات</button>
+            <button class="tab" data-tab="landings">🎯 صفحات الهبوط</button>
         </div>
 
         <!-- ============ TAB: ADD PRODUCT ============ -->
@@ -768,6 +769,68 @@ body {
         </div>
 
     </div>
+    <!-- ============ TAB: LANDINGS ============ -->
+<div class="tab-content" id="tab-landings">
+
+    <!-- قائمة الصفحات -->
+    <div class="card">
+        <div class="card-title">🎯 صفحات الهبوط</div>
+        <div class="card-subtitle">صفحات تسويقية مرتبطة بالمنتجات</div>
+
+        <button type="button" class="btn btn-primary" onclick="showLandingForm()" style="width:100%; margin-bottom:15px;">
+            ➕ إنشاء صفحة هبوط جديدة
+        </button>
+
+        <div id="landingsList">
+            <div class="empty"><div class="icon">⏳</div><p>جارٍ التحميل...</p></div>
+        </div>
+    </div>
+
+    <!-- نموذج الإنشاء/التعديل -->
+    <div class="card" id="landingFormCard" style="display:none;">
+        <div class="card-title" id="landingFormTitle">➕ إنشاء صفحة هبوط</div>
+        <div class="card-subtitle">اربطها بمنتج وأضف الصور والاستمارة</div>
+
+        <div id="landingMessage" class="message"></div>
+
+        <form id="landingForm">
+            <input type="hidden" id="landingId">
+
+            <div class="field">
+                <label>اسم الصفحة (داخلي فقط) *</label>
+                <input type="text" id="landingName" required placeholder="عرض رمضان 2026">
+            </div>
+
+            <div class="field">
+                <label>الرابط المختصر (Slug) *</label>
+                <input type="text" id="landingSlug" required dir="ltr" placeholder="promo-2026">
+                <small class="help">سيصبح الرابط: /landing.html?slug=promo-2026</small>
+            </div>
+
+            <div class="field">
+                <label>المنتج المرتبط *</label>
+                <select id="landingProductId" required>
+                    <option value="">-- اختر منتج --</option>
+                </select>
+            </div>
+
+            <!-- البلوكات -->
+            <div class="section-title">📦 محتوى الصفحة (بلوكات)</div>
+            <div class="help" style="margin-bottom:10px;">أضف الصور والاستمارة بالترتيب المطلوب</div>
+
+            <div id="landingBlocks"></div>
+
+            <button type="button" class="btn btn-add" onclick="addBlock('image')">+ إضافة صورة</button>
+            <button type="button" class="btn btn-add" onclick="addBlock('form')" style="margin-top:6px;">+ إضافة استمارة الطلب</button>
+
+            <div class="save-bar">
+                <button type="submit" class="btn btn-primary" id="landingSubmitBtn">💾 حفظ الصفحة</button>
+                <button type="button" class="btn btn-secondary" onclick="hideLandingForm()">إلغاء</button>
+            </div>
+        </form>
+    </div>
+
+</div>
 </div>
 
 <script type="module">
@@ -1195,6 +1258,246 @@ window.addReviewRow = function(...a) { _r.apply(this, a); fixMobileRows(); };
 
 setTimeout(fixMobileRows, 200);
 window.addEventListener('resize', fixMobileRows);
+
+/* ============ LANDING PAGES ============ */
+
+let allProducts = [];
+
+// ✅ تحديث عند الضغط على تبويب landing
+document.querySelector('[data-tab="landings"]').addEventListener('click', () => {
+    loadLandings();
+});
+
+// ✅ عرض/إخفاء النموذج
+window.showLandingForm = function() {
+    $('landingFormCard').style.display = 'block';
+    $('landingFormTitle').textContent = '➕ إنشاء صفحة هبوط';
+    $('landingForm').reset();
+    $('landingId').value = '';
+    $('landingBlocks').innerHTML = '';
+    loadProductsInSelect();
+    window.scrollTo({ top: $('landingFormCard').offsetTop - 100, behavior: 'smooth' });
+};
+
+window.hideLandingForm = function() {
+    $('landingFormCard').style.display = 'none';
+    $('landingForm').reset();
+    $('landingBlocks').innerHTML = '';
+    $('landingMessage').className = 'message';
+};
+
+// ✅ تحميل المنتجات في القائمة المنسدلة
+function loadProductsInSelect() {
+    const select = $('landingProductId');
+    select.innerHTML = '<option value="">-- اختر منتج --</option>';
+    allProducts.forEach(p => {
+        select.innerHTML += `<option value="${p.id}">${p.data.name}</option>`;
+    });
+}
+
+// ✅ إضافة بلوك
+window.addBlock = function(type, data = {}) {
+    const container = $('landingBlocks');
+    const id = 'block-' + Date.now() + Math.random().toString(36).substr(2, 5);
+
+    const div = document.createElement('div');
+    div.className = 'row-item';
+    div.dataset.type = type;
+    div.dataset.blockId = id;
+
+    if (type === 'image') {
+        div.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-weight:700; color:#00A878;">🖼️ صورة</span>
+                <button type="button" class="row-remove" onclick="moveBlock(this, -1)">↑</button>
+                <button type="button" class="row-remove" onclick="moveBlock(this, 1)">↓</button>
+                <button type="button" class="row-remove" onclick="this.closest('.row-item').remove()">×</button>
+            </div>
+            <div>
+                <span class="row-label">مسار الصورة</span>
+                <input type="text" class="block-image" dir="ltr" placeholder="assets/landings/..." value="${data.url || ''}">
+            </div>
+        `;
+    } else if (type === 'form') {
+        div.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-weight:700; color:#00A878;">📝 استمارة الطلب</span>
+                <button type="button" class="row-remove" onclick="moveBlock(this, -1)">↑</button>
+                <button type="button" class="row-remove" onclick="moveBlock(this, 1)">↓</button>
+                <button type="button" class="row-remove" onclick="this.closest('.row-item').remove()">×</button>
+            </div>
+            <p style="font-size:12px; color:#666; margin:0;">سيتم عرض الاستمارة هنا (نفس استمارة sproduct)</p>
+        `;
+    }
+
+    container.appendChild(div);
+};
+
+// ✅ نقل البلوك (فوق/تحت)
+window.moveBlock = function(btn, direction) {
+    const block = btn.closest('.row-item');
+    const parent = block.parentElement;
+    const blocks = Array.from(parent.children);
+    const index = blocks.indexOf(block);
+    const targetIndex = index + direction;
+
+    if (targetIndex < 0 || targetIndex >= blocks.length) return;
+
+    if (direction === -1) {
+        parent.insertBefore(block, blocks[targetIndex]);
+    } else {
+        parent.insertBefore(blocks[targetIndex], block);
+    }
+};
+
+// ✅ تحميل الصفحات
+function loadLandings() {
+    onSnapshot(collection(db, 'landings'), (snapshot) => {
+        if (snapshot.empty) {
+            $('landingsList').innerHTML = '<div class="empty"><div class="icon">🎯</div><p>لا توجد صفحات بعد</p></div>';
+            return;
+        }
+
+        $('landingsList').innerHTML = '';
+        snapshot.forEach(docSnap => {
+            const l = docSnap.data();
+            const id = docSnap.id;
+
+            const item = document.createElement('div');
+            item.className = 'product-item';
+            item.innerHTML = `
+                <div style="flex:1; min-width:0;">
+                    <h4>${l.name}</h4>
+                    <div class="price" dir="ltr" style="font-size:11px;">/landing.html?slug=${l.slug}</div>
+                </div>
+                <button class="btn btn-secondary" onclick="copyLandingLink('${l.slug}')">🔗 نسخ</button>
+                <button class="btn btn-secondary" data-edit-landing="${id}">✏️</button>
+                <button class="btn btn-danger" data-delete-landing="${id}">🗑</button>
+            `;
+            $('landingsList').appendChild(item);
+        });
+
+        $('landingsList').querySelectorAll('[data-edit-landing]').forEach(btn =>
+            btn.addEventListener('click', () => editLanding(btn.dataset.editLanding)));
+        $('landingsList').querySelectorAll('[data-delete-landing]').forEach(btn =>
+            btn.addEventListener('click', () => deleteLanding(btn.dataset.deleteLanding)));
+    });
+}
+
+// ✅ نسخ الرابط
+window.copyLandingLink = function(slug) {
+    const url = location.origin + location.pathname.replace('admin.html', '') + 'landing.html?slug=' + slug;
+    navigator.clipboard.writeText(url).then(() => {
+        alert('✅ تم نسخ الرابط:\n' + url);
+    });
+};
+
+// ✅ تعديل صفحة
+async function editLanding(id) {
+    const snap = await getDoc(doc(db, 'landings', id));
+    if (!snap.exists()) return;
+    const l = snap.data();
+
+    $('landingId').value = id;
+    $('landingName').value = l.name || '';
+    $('landingSlug').value = l.slug || '';
+
+    loadProductsInSelect();
+    setTimeout(() => {
+        $('landingProductId').value = l.productId || '';
+    }, 100);
+
+    $('landingBlocks').innerHTML = '';
+    (l.blocks || []).forEach(b => addBlock(b.type, b));
+
+    $('landingFormCard').style.display = 'block';
+    $('landingFormTitle').textContent = '✏️ تعديل صفحة الهبوط';
+    window.scrollTo({ top: $('landingFormCard').offsetTop - 100, behavior: 'smooth' });
+}
+
+// ✅ حذف صفحة
+async function deleteLanding(id) {
+    if (!confirm('هل أنت متأكد من حذف هذه الصفحة؟')) return;
+    try {
+        await deleteDoc(doc(db, 'landings', id));
+    } catch (err) {
+        alert('خطأ: ' + err.message);
+    }
+}
+
+// ✅ حفظ الصفحة
+$('landingForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = $('landingId').value;
+
+    const blocks = Array.from(document.querySelectorAll('#landingBlocks .row-item')).map(b => {
+        if (b.dataset.type === 'image') {
+            return {
+                type: 'image',
+                url: b.querySelector('.block-image').value.trim()
+            };
+        } else {
+            return { type: 'form' };
+        }
+    });
+
+    // التحقق
+    if (blocks.length === 0) {
+        showLandingMessage('❌ أضف على الأقل صورة واحدة', 'error');
+        return;
+    }
+
+    if (!blocks.some(b => b.type === 'form')) {
+        showLandingMessage('❌ أضف استمارة الطلب', 'error');
+        return;
+    }
+
+    const landingData = {
+        name: $('landingName').value.trim(),
+        slug: $('landingSlug').value.trim().toLowerCase().replace(/\s+/g, '-'),
+        productId: $('landingProductId').value,
+        blocks: blocks,
+        updatedAt: serverTimestamp()
+    };
+
+    const btn = $('landingSubmitBtn');
+    btn.disabled = true;
+    btn.textContent = 'جارٍ الحفظ...';
+
+    try {
+        if (id) {
+            await updateDoc(doc(db, 'landings', id), landingData);
+            showLandingMessage('✅ تم التحديث', 'success');
+        } else {
+            landingData.createdAt = serverTimestamp();
+            await addDoc(collection(db, 'landings'), landingData);
+            showLandingMessage('✅ تم الإنشاء', 'success');
+        }
+        hideLandingForm();
+        loadLandings();
+    } catch (err) {
+        showLandingMessage('❌ ' + err.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '💾 حفظ الصفحة';
+    }
+});
+
+// ✅ رسالة الصفحة
+function showLandingMessage(text, type) {
+    const msg = $('landingMessage');
+    msg.textContent = text;
+    msg.className = 'message ' + type + ' show';
+    setTimeout(() => msg.className = 'message', 4000);
+}
+
+// ✅ تحميل المنتجات في الذاكرة
+onSnapshot(collection(db, 'products'), (snapshot) => {
+    allProducts = [];
+    snapshot.forEach(d => {
+        allProducts.push({ id: d.id, data: d.data() });
+    });
+});
 </script>
 
 </body>

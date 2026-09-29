@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>عرض خاص — Zero Store</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style1.css">
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+
+    <style>
+        /* ✅ إخفاء الهيدر والفوتر */
+        body.landing-page #header,
+        body.landing-page .shipping-bar,
+        body.landing-page .site-footer,
+        body.landing-page .whatsapp-btn,
+        body.landing-page .back-to-top {
+            display: none !important;
+        }
+
+        body.landing-page {
+            background: #F5F4EF;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* ✅ البلوكات */
+        .landing-blocks {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ✅ الصور — بعرض كامل */
+        .landing-image {
+            width: 100%;
+            display: block;
+            margin: 0;
+            padding: 0;
+            line-height: 0;
+        }
+
+        .landing-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ✅ حاوية الاستمارة */
+        .landing-form-wrapper {
+            width: 100%;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        /* ✅ زر الطلب الثابت */
+        .landing-fixed-btn {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .landing-fixed-btn button {
+            width: 100%;
+            max-width: 500px;
+            height: 56px;
+            border: none;
+            border-radius: 14px;
+            background: #00A878;
+            color: #fff;
+            font-family: "Cairo", sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+        }
+
+        .landing-fixed-btn button:active {
+            transform: scale(0.98);
+        }
+
+        .landing-fixed-btn.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* ✅ Loading */
+        .landing-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .landing-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #E5E5E5;
+            border-top-color: #00A878;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .landing-error {
+            text-align: center;
+            padding: 60px 20px;
+            font-family: "Cairo", sans-serif;
+        }
+
+        .landing-error h2 {
+            font-size: 20px;
+            color: #0B0B0B;
+            margin-bottom: 10px;
+        }
+
+        .landing-error p {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* ✅ إضافة padding أسفل الصفحة للزر الثابت */
+        .landing-blocks {
+            padding-bottom: 90px;
+        }
+    </style>
+</head>
+<body class="landing-page">
+
+    <!-- ✅ Loading -->
+    <div class="landing-loading" id="loading">
+        <div class="landing-spinner"></div>
+        <p style="font-family:Cairo; color:#666;">جارٍ التحميل...</p>
+    </div>
+
+    <!-- ✅ المحتوى -->
+    <div class="landing-blocks" id="landingContent" style="display:none;"></div>
+
+    <!-- ✅ زر الطلب الثابت -->
+    <div class="landing-fixed-btn" id="orderBtn">
+        <button type="button" onclick="scrollToForm()">
+            اطلب الآن
+        </button>
+    </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, doc, getDoc }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAow12ZmlBvMGubA6807hMOBIW4QA1ZFYE",
+  authDomain: "zero-store-dz.firebaseapp.com",
+  projectId: "zero-store-dz",
+  storageBucket: "zero-store-dz.firebasestorage.app",
+  messagingSenderId: "152683195719",
+  appId: "1:152683195719:web:c3d73ef8a9d6e546a2f062"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const slug = new URLSearchParams(location.search).get('slug');
+
+async function initLanding() {
+    if (!slug) {
+        showError('الرابط غير صالح');
+        return;
+    }
+
+    try {
+        const q = query(collection(db, 'landings'), where('slug', '==', slug));
+        const snap = await getDocs(q);
+
+        if (snap.empty) {
+            showError('الصفحة غير موجودة');
+            return;
+        }
+
+        const landingData = snap.docs[0].data();
+        const productId = landingData.productId;
+
+        // جلب بيانات المنتج
+        const productSnap = await getDoc(doc(db, 'products', productId));
+        if (!productSnap.exists()) {
+            showError('المنتج غير موجود');
+            return;
+        }
+
+        const product = productSnap.data();
+
+        // بناء الصفحة
+        renderLanding(landingData, product, productId);
+
+    } catch (err) {
+        console.error(err);
+        showError('حدث خطأ في التحميل');
+    }
+}
+
+function renderLanding(landing, product, productId) {
+    const content = document.getElementById('landingContent');
+    content.innerHTML = '';
+
+    landing.blocks.forEach(block => {
+        if (block.type === 'image') {
+            const imgDiv = document.createElement('div');
+            imgDiv.className = 'landing-image';
+            imgDiv.innerHTML = `<img src="${block.url}" alt="${product.name}" loading="lazy">`;
+            content.appendChild(imgDiv);
+        } else if (block.type === 'form') {
+            const formDiv = document.createElement('div');
+            formDiv.className = 'landing-form-wrapper';
+            formDiv.innerHTML = buildOrderForm(product, productId);
+            content.appendChild(formDiv);
+        }
+    });
+
+    document.getElementById('loading').style.display = 'none';
+    content.style.display = 'block';
+    document.title = landing.name + ' — Zero Store';
+
+    // تهيئة الاستمارة
+    initFormLogic(product, productId);
+
+    // مراقبة الاستمارة لإخفاء الزر
+    observeFormVisibility();
+}
+
+function buildOrderForm(product, productId) {
+    const quantities = product.quantities || [];
+    const qtyOptions = quantities.length > 0 ? quantities : [
+        { value: 1, price: product.price, badge: '' }
+    ];
+
+    return `
+        <form class="order-form" id="landingOrderForm">
+            <h2 class="form-title">أكمل الطلب</h2>
+            <p class="form-subtitle">أدخل معلوماتك وسنتواصل معك قريباً</p>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="full-name">الاسم الكامل</label>
+                    <input type="text" id="full-name" placeholder="مثال: أحمد علي">
+                </div>
+                <div class="form-group">
+                    <label for="phone">رقم الهاتف</label>
+                    <input type="tel" id="phone" placeholder="07 75 45 09 63" inputmode="tel">
+                    <small id="phoneError" style="display:none; color:#E74C3C; font-family:Cairo,sans-serif; font-size:12px; font-weight:600; margin-top:6px;"></small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="wilaya">الولاية</label>
+                <select id="wilaya" required>
+                    <option value="" disabled selected>اختر ولايتك</option>
+                    ${generateWilayaOptions()}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>نوع التوصيل</label>
+                <div class="delivery-text-options">
+                    <label class="delivery-text-option">
+                        <input type="radio" name="deliveryType" value="home" checked>
+                        <span class="radio-circle"></span>
+                        <span>🏠 توصيل للمنزل</span>
+                    </label>
+                    <label class="delivery-text-option">
+                        <input type="radio" name="deliveryType" value="office">
+                        <span class="radio-circle"></span>
+                        <span>🏢 توصيل للمكتب</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="address">البلدية / العنوان</label>
+                <input type="text" id="address" placeholder="مثال: حي 5 جويلية، عمارة 12">
+            </div>
+
+            <div class="form-group">
+                <label>الكمية</label>
+                <div class="quantity-options">
+                    ${qtyOptions.map((q, i) => `
+                        <label class="qty-option">
+                            <input type="radio" name="quantity" value="${q.value}" data-price="${q.price}" ${i === 0 ? 'checked' : ''}>
+                            <div class="qty-content">
+                                ${q.badge ? `<span class="qty-badge">${q.badge}</span>` : ''}
+                                <span class="qty-number">${q.value}</span>
+                                <span class="qty-price">${q.price.toLocaleString('ar-DZ')} دج</span>
+                            </div>
+                        </label>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div class="delivery-price-box">
+                <span>🚚 سعر التوصيل:</span>
+                <strong id="summaryDelivery">-- دج</strong>
+            </div>
+
+            <div class="total-inline">
+                <span>الإجمالي:</span>
+                <strong id="summaryTotal">-- دج</strong>
+            </div>
+
+            <button type="submit" class="confirm-order-btn">
+                تأكيد الطلب
+            </button>
+        </form>
+    `;
+}
+
+function generateWilayaOptions() {
+    const wilayas = [
+        "01|أدرار","02|الشلف","03|الأغواط","04|أم البواقي","05|باتنة",
+        "06|بجاية","07|بسكرة","08|بشار","09|البليدة","10|البويرة",
+        "11|تمنراست","12|تبسة","13|تلمسان","14|تيارت","15|تيزي وزو",
+        "16|الجزائر","17|الجلفة","18|جيجل","19|سطيف","20|سعيدة",
+        "21|سكيكدة","22|سيدي بلعباس","23|عنابة","24|قالمة","25|قسنطينة",
+        "26|المدية","27|مستغانم","28|المسيلة","29|معسكر","30|ورقلة",
+        "31|وهران","32|البيض","33|إليزي","34|برج بوعريريج","35|بومرداس",
+        "36|الطارف","37|تندوف","38|تيسمسيلت","39|الوادي","40|خنشلة",
+        "41|سوق أهراس","42|تيبازة","43|ميلة","44|عين الدفلى","45|النعامة",
+        "46|عين تموشنت","47|غرداية","48|غليزان","49|تيميمون","50|برج باجي مختار",
+        "51|أولاد جلال","52|بني عباس","53|إن صالح","54|إن قزام","55|تقرت",
+        "56|جانت","57|المغير","58|المنيعة","59|أفلو","60|بريكة",
+        "61|القنطرة","62|بئر العاتر","63|العريشة","64|قصر الشلالة","65|عين وسارة",
+        "66|مسعد","67|قصر البخاري","68|بوسعادة","69|الأبيض سيدي الشيخ"
+    ];
+    return wilayas.map(w => {
+        const [code, name] = w.split('|');
+        return `<option value="${code}">${name}</option>`;
+    }).join('');
+}
+
+function initFormLogic(product, productId) {
+    // ✅ احفظ بيانات المنتج
+    window.currentProductName = product.name;
+    window.currentProductId = productId;
+
+    const form = document.getElementById('landingOrderForm');
+    if (!form) return;
+
+    // تحقق من الهاتف
+    const phoneInput = document.getElementById('phone');
+    const phoneError = document.getElementById('phoneError');
+    if (phoneInput && phoneError) {
+        phoneInput.addEventListener('input', () => {
+            phoneError.style.display = 'none';
+            phoneInput.classList.remove('error');
+        });
+    }
+}
+
+function scrollToForm() {
+    const form = document.getElementById('landingOrderForm');
+    if (form) {
+        form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function observeFormVisibility() {
+    const form = document.getElementById('landingOrderForm');
+    const btn = document.getElementById('orderBtn');
+    if (!form || !btn) return;
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                btn.classList.add('hide');
+            } else {
+                btn.classList.remove('hide');
+            }
+        });
+    }, { threshold: 0.15 });
+
+    observer.observe(form);
+}
+
+function showError(message) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('orderBtn').style.display = 'none';
+    const content = document.getElementById('landingContent');
+    content.innerHTML = `
+        <div class="landing-error">
+            <h2>⚠️ ${message}</h2>
+            <p>يرجى التحقق من الرابط</p>
+        </div>
+    `;
+    content.style.display = 'block';
+}
+
+initLanding();
+</script>
+
+<!-- ✅ Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1804500407553243');
+fbq('track', 'PageView');
+</script>
+
+<!-- ✅ TikTok Pixel -->
+<script>
+!function (w, d, t) {
+  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+  ttq.load('DATOVG3C77U5PB60F090');
+  ttq.page();
+}(window, document, 'ttq');
+</script>
+
+<!-- ✅ script.js -->
+<script src="js/script.js"></script>
+
+</body>
+</html>
