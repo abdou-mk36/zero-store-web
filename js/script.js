@@ -1,8 +1,4 @@
 window.skipAutoSliders = new URLSearchParams(location.search).has('id');
-/* =========================================================
-   GOOGLE SHEETS — إعدادات
-========================================================= */
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwx2Tb1ntk35MmnhfCGDBXGlg8jjHGHdJIA9Pu_J93bWyjndp6jahop9H4wR-5Xr3EK/exec";
 
 /* =========================================================
    DELIVERY PRICES — أسعار التوصيل
@@ -993,9 +989,9 @@ function sendToTelegram(chatId, message) {
             `;
         }
 
-        // ✅ 1. Google Sheets
-        const params = new URLSearchParams({
-            productName: productName,    // ← جديد
+        // ✅ 1. Google Sheets (عبر Worker)
+        const sheetParams = {
+            productName: productName,
             name: name,
             phone: phone,
             wilaya: wilayaText,
@@ -1005,14 +1001,12 @@ function sendToTelegram(chatId, message) {
             productPrice: productPrice,
             deliveryPrice: deliveryPrice,
             total: total
-        });
+        };
 
-        const sheetURL = GOOGLE_SCRIPT_URL + '?' + params.toString();
-
-        fetch(sheetURL, {
-            method: 'GET',
-            mode: 'no-cors',
-            keepalive: true
+        fetch(TELEGRAM_PROXY_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'sheet', params: sheetParams })
         }).catch(err => console.warn('Sheet error:', err));
 
         // ✅ 2. Telegram
@@ -1635,26 +1629,3 @@ window.updateOrderSummary = updateSummary;
 })();
 
 
-/* =========================================================
-   حماية بسيطة — تمنع المبتدئين من DevTools
-========================================================= */
-(function basicDevToolsBlock() {
-
-    // ✅ منع كليك يمين
-    document.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-    });
-
-    // ✅ منع F12 و Ctrl+Shift+I و Ctrl+U
-    document.addEventListener('keydown', (e) => {
-        if (
-            e.key === 'F12' ||
-            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-            (e.ctrlKey && e.key === 'U')
-        ) {
-            e.preventDefault();
-            return false;
-        }
-    });
-
-})();
