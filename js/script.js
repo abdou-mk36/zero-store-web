@@ -873,22 +873,18 @@ if (document.getElementById('wheelTrack') && !new URLSearchParams(location.searc
 })();
 
 /* =========================================================
-   TELEGRAM — إعدادات
+   TELEGRAM — عبر Cloudflare Worker (آمن)
 ========================================================= */
-const TELEGRAM_BOT_TOKEN    = "8837412883:AAEWdgFNZ221Ja2BPyilV5y1X5EQ8yXpMWk";
-const TELEGRAM_CHAT_ORDERS  = "-1004491843696";
-const TELEGRAM_CHAT_REVIEWS = "-1004316332526";
+const TELEGRAM_PROXY_URL = "https://zero-store-proxy.mekdicheabdessalam36.workers.dev";
 
 function sendToTelegram(chatId, message) {
-    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-    return fetch(url, {
+    // ✅ نحدد النوع من chatId
+    const type = (chatId === "-1004491843696") ? "order" : "review";
+    
+    return fetch(TELEGRAM_PROXY_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            chat_id: chatId, 
-            text: message, 
-            parse_mode: 'Markdown' 
-        })
+        body: JSON.stringify({ type: type, message: message })
     }).then(res => res.json());
 }
 

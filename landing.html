@@ -142,7 +142,7 @@
 <!-- ✅ إعدادات الاستمارة -->
 <script>
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwx2Tb1ntk35MmnhfCGDBXGlg8jjHGHdJIA9Pu_J93bWyjndp6jahop9H4wR-5Xr3EK/exec";
-const TELEGRAM_BOT_TOKEN = "8837412883:AAEWdgFNZ221Ja2BPyilV5y1X5EQ8yXpMWk";
+const TELEGRAM_PROXY_URL = "https://zero-store-proxy.mekdicheabdessalam36.workers.dev";
 const TELEGRAM_CHAT_ORDERS = "-1004491843696";
 
 const DELIVERY_HOME = {
@@ -166,11 +166,11 @@ const DELIVERY_OFFICE = {
 };
 
 function sendToTelegram(chatId, message) {
-    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-    return fetch(url, {
+    const type = (chatId === "-1004491843696") ? "order" : "review";
+    return fetch(TELEGRAM_PROXY_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: chatId, text: message, parse_mode: 'Markdown' })
+        body: JSON.stringify({ type: type, message: message })
     }).then(res => res.json());
 }
 </script>
