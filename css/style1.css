@@ -3676,85 +3676,70 @@ About
    FLOATING BUTTONS
 ========================================================= */
 
-/* ✅ زر واتساب — يسار */
+/* ✅ زر واتساب — مخفي افتراضياً */
 .whatsapp-btn {
+    display: none !important;
+}
+
+/* ✅ يظهر فقط في sproduct + landing */
+body.show-whatsapp .whatsapp-btn {
+    display: flex !important;
+
     position: fixed;
-    bottom: 85px;
-    left: 20px;              /* ✅ يسار */
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
     z-index: 997;
 
-    width: 56px;
-    height: 56px;
+    width: 50px;
+    height: 50px;
 
-    display: flex;
     align-items: center;
     justify-content: center;
 
     background: #25D366;
     color: #ffffff;
-    border-radius: 50%;
 
+    border-radius: 25px 0 0 25px;
     text-decoration: none;
-    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
 
-    transition: all 0.3s ease;
-    animation: pulseWhatsApp 2s infinite;
+    box-shadow: -4px 0 15px rgba(37, 211, 102, 0.3);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
 }
 
-.whatsapp-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 12px 35px rgba(37, 211, 102, 0.5);
+body.show-whatsapp .whatsapp-btn:hover {
+    transform: translateY(-50%) translateX(-5px);
+    background: #1EBE5D;
+    box-shadow: -8px 0 25px rgba(37, 211, 102, 0.5);
 }
 
-.whatsapp-btn svg {
-    width: 28px;
-    height: 28px;
+body.show-whatsapp .whatsapp-btn svg {
+    width: 26px;
+    height: 26px;
+    margin-right: 3px;
 }
 
-/* ✅ تلميح */
-.whatsapp-tooltip {
-    position: absolute;
-    left: 70px;
-    top: 50%;
-    transform: translateY(-50%);
-
-    background: #0B0B0B;
-    color: #ffffff;
-
-    padding: 8px 14px;
-    border-radius: 8px;
-
-    font-family: "Cairo", sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-
-    white-space: nowrap;
+/* ✅ إخفاء عند الاستمارة */
+body.show-whatsapp .whatsapp-btn.hide-whatsapp {
     opacity: 0;
     visibility: hidden;
-
-    transition: all 0.3s ease;
+    transform: translateY(-50%) translateX(100%);
     pointer-events: none;
 }
 
-.whatsapp-btn:hover .whatsapp-tooltip {
-    opacity: 1;
-    visibility: visible;
-    left: 75px;
+/* ✅ إخفاء الـ tooltip */
+.whatsapp-tooltip {
+    display: none !important;
 }
 
-/* ✅ نبض */
-@keyframes pulseWhatsApp {
-    0% {
-        box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4),
-                    0 0 0 0 rgba(37, 211, 102, 0.5);
+@media (max-width: 477px) {
+    body.show-whatsapp .whatsapp-btn {
+        width: 46px;
+        height: 46px;
     }
-    70% {
-        box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4),
-                    0 0 0 15px rgba(37, 211, 102, 0);
-    }
-    100% {
-        box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4),
-                    0 0 0 0 rgba(37, 211, 102, 0);
+    body.show-whatsapp .whatsapp-btn svg {
+        width: 24px;
+        height: 24px;
     }
 }
 
