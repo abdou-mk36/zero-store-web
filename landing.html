@@ -420,6 +420,40 @@ function initFormLogic(product, productId) {
     checkOffice();
     updateSummary();
 
+        // ✅ عند Enter → لا يُرسل + ينزل للزر
+        function dismissAndScroll() {
+        if (document.activeElement && document.activeElement.blur) {
+            document.activeElement.blur();
+        }
+        setTimeout(() => {
+            const submitBtn = form.querySelector('.confirm-order-btn');
+            if (!submitBtn) return;
+            const btnRect = submitBtn.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            if (btnRect.bottom > viewportHeight - 100) {
+                const scrollAmount = btnRect.bottom - viewportHeight + 40;
+                window.scrollBy({ top: scrollAmount, behavior: 'smooth' });
+            }
+        }, 300);
+    }
+
+    form.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            dismissAndScroll();
+        }
+    });
+
+    // ✅ عند الضغط على الكمية → ينزل للزر
+    form.querySelectorAll('.qty-option').forEach(option => {
+        option.addEventListener('click', dismissAndScroll);
+    });
+
+    // ✅ عند الضغط على نوع التوصيل
+    form.querySelectorAll('.delivery-text-option').forEach(option => {
+        option.addEventListener('click', dismissAndScroll);
+    });
+    
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
