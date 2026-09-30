@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -420,8 +420,8 @@ function initFormLogic(product, productId) {
     checkOffice();
     updateSummary();
 
-        // ✅ عند Enter → لا يُرسل + ينزل للزر
-        function dismissAndScroll() {
+    // ✅ عند Enter → لا يُرسل + ينزل للزر
+    function dismissAndScroll() {
         if (document.activeElement && document.activeElement.blur) {
             document.activeElement.blur();
         }
@@ -444,16 +444,35 @@ function initFormLogic(product, productId) {
         }
     });
 
-    // ✅ عند الضغط على الكمية → ينزل للزر
     form.querySelectorAll('.qty-option').forEach(option => {
         option.addEventListener('click', dismissAndScroll);
     });
 
-    // ✅ عند الضغط على نوع التوصيل
     form.querySelectorAll('.delivery-text-option').forEach(option => {
         option.addEventListener('click', dismissAndScroll);
     });
-    
+
+    // ✅ إعادة تعيين الزر عند الرجوع (bfcache)
+    window.addEventListener('pageshow', (e) => {
+        if (e.persisted) {
+            const submitBtn = form.querySelector('.confirm-order-btn');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'تأكيد الطلب';
+                submitBtn.classList.remove('loading');
+            }
+
+            // ✅ إخفاء زر "اطلب الآن" إذا كانت الاستمارة في الشاشة
+            const orderBtn = document.getElementById('orderBtn');
+            if (orderBtn) {
+                const rect = form.getBoundingClientRect();
+                const viewportHeight = window.innerHeight;
+                const isVisible = rect.top < viewportHeight * 0.85 && rect.bottom > 0;
+                orderBtn.classList.toggle('hide', isVisible);
+            }
+        }
+    });
+
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
@@ -517,7 +536,7 @@ function initFormLogic(product, productId) {
             `🚛 *التوصيل:* ${deliveryPrice.toLocaleString('ar-DZ')} دج\n\n` +
             `💵 *الإجمالي:* ${total.toLocaleString('ar-DZ')} دج\n\n` +
             `🏠 *العنوان:* ${address}`
-            ).then(() => {
+        ).then(() => {
             const pid = window.currentProductId || '';
             window.location.href = 'thank-you.html' + (pid ? '?id=' + pid : '') + (slug ? '&slug=' + slug : '');
         }).catch(() => {
@@ -542,7 +561,6 @@ function observeFormVisibility() {
     function checkFormVisibility() {
         const rect = form.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
-        // إذا الاستمارة تظهر في الشاشة → أخفِ الزر
         const isVisible = rect.top < viewportHeight * 0.85 && rect.bottom > 0;
         btn.classList.toggle('hide', isVisible);
     }
@@ -555,12 +573,10 @@ function observeFormVisibility() {
 
     observer.observe(form);
 
-    // ✅ إعادة التحقق عند الرجوع (bfcache)
     window.addEventListener('pageshow', () => {
         setTimeout(checkFormVisibility, 100);
     });
 
-    // ✅ أيضاً عند تغيير حجم الشاشة
     window.addEventListener('resize', checkFormVisibility);
 }
 
