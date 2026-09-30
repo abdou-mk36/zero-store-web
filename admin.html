@@ -712,6 +712,154 @@ body {
     .save-bar { padding: 10px 12px; bottom: 10px; }
     .save-bar .btn { font-size: 13px; padding: 11px 14px; }
 }
+/* ✅ Image Picker Modal */
+.image-picker-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.image-picker-modal.open { display: flex; }
+
+.image-picker-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+}
+
+.image-picker-content {
+    position: relative;
+    background: #fff;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 750px;
+    max-height: 88vh;
+    padding: 22px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.image-picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+.image-picker-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+}
+.image-picker-close,
+.image-picker-refresh {
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    background: #F5F4EF;
+    color: #333;
+    transition: all 0.2s;
+}
+.image-picker-refresh { background: #EFFBF3; color: #00A878; }
+.image-picker-close:hover { background: #E74C3C; color: #fff; }
+.image-picker-refresh:hover { background: #00A878; color: #fff; }
+
+.image-picker-search {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #E5E5E5;
+    border-radius: 12px;
+    font-family: 'Cairo';
+    font-size: 14px;
+    outline: none;
+    margin-bottom: 14px;
+    box-sizing: border-box;
+}
+.image-picker-search:focus { border-color: #00A878; }
+
+.image-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    overflow-y: auto;
+    padding: 4px;
+    flex: 1;
+}
+
+.image-picker-item {
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #F8F8F5;
+    transition: all 0.2s;
+    padding: 6px;
+    box-sizing: border-box;
+}
+.image-picker-item:hover {
+    border-color: #00A878;
+    background: #EFFBF3;
+    transform: translateY(-2px);
+}
+.image-picker-item img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+    background: #fff;
+}
+.image-picker-item p {
+    font-size: 10px;
+    margin: 6px 0 0;
+    word-break: break-all;
+    text-align: center;
+    color: #666;
+    line-height: 1.3;
+    font-weight: 600;
+}
+
+/* ✅ زر اختيار الصورة بجانب كل حقل */
+.pick-image-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 8px;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 8px;
+    background: #00A878;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+.pick-image-btn:hover { background: #008F65; transform: translateY(-50%) scale(1.08); }
+
+input.has-picker { padding-left: 50px !important; }
+
+@media (max-width: 640px) {
+    .image-picker-content { padding: 16px; }
+    .image-picker-grid { grid-template-columns: repeat(2, 1fr); }
+    .image-picker-item img { height: 80px; }
+    .pick-image-btn { width: 32px; height: 32px; font-size: 14px; }
+    input.has-picker { padding-left: 46px !important; }
+}
 </style>
 </head>
 <body>
@@ -1584,7 +1732,169 @@ onSnapshot(collection(db, 'products'), (snapshot) => {
         allProducts.push({ id: d.id, data: d.data() });
     });
 });
+/* ============ IMAGE PICKER ============ */
+
+const GITHUB_REPO = 'abdou-mk36/zero-store-web';
+const GITHUB_BRANCH = 'main';
+
+let currentImageInput = null;
+let allImages = [];
+let imagesLoaded = false;
+
+window.openImagePicker = function(input) {
+    currentImageInput = input;
+    document.getElementById('imagePickerModal').classList.add('open');
+    document.getElementById('imageSearch').value = '';
+
+    if (!imagesLoaded) {
+        loadAllImages();
+    } else {
+        renderImages(allImages);
+    }
+};
+
+window.closeImagePicker = function() {
+    document.getElementById('imagePickerModal').classList.remove('open');
+    currentImageInput = null;
+};
+
+window.refreshImages = function() {
+    imagesLoaded = false;
+    loadAllImages();
+};
+
+async function loadAllImages() {
+    const grid = document.getElementById('imagePickerGrid');
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:30px;color:#999;">جارٍ التحميل من GitHub...</div>';
+
+    try {
+        const url = `https://api.github.com/repos/${GITHUB_REPO}/git/trees/${GITHUB_BRANCH}?recursive=1`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('GitHub API error');
+
+        const data = await res.json();
+
+        allImages = (data.tree || [])
+            .filter(item => item.type === 'blob')
+            .map(item => item.path)
+            .filter(path => /\.(webp|png|jpg|jpeg)$/i.test(path))
+            .filter(path => path.startsWith('assets/'))
+            .filter(path => !path.includes('favicon'))
+            .filter(path => !path.includes('logo-main-dark'))
+            .sort();
+
+        imagesLoaded = true;
+        renderImages(allImages);
+    } catch (err) {
+        console.error(err);
+        grid.innerHTML = `
+            <div style="grid-column:1/-1;text-align:center;padding:30px;">
+                <p style="color:#E74C3C;margin-bottom:10px;">❌ خطأ في التحميل</p>
+                <button type="button" onclick="refreshImages()" class="btn btn-secondary">🔄 إعادة المحاولة</button>
+            </div>
+        `;
+    }
+}
+
+function renderImages(images) {
+    const grid = document.getElementById('imagePickerGrid');
+
+    if (images.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:30px;color:#999;">لا توجد نتائج</div>';
+        return;
+    }
+
+    grid.innerHTML = images.map(path => `
+        <div class="image-picker-item" onclick="selectImage('${path}')">
+            <img src="${path}" alt="" loading="lazy" onerror="this.style.opacity='0.2'">
+            <p>${path.split('/').pop()}</p>
+        </div>
+    `).join('');
+}
+
+window.filterImages = function() {
+    const search = document.getElementById('imageSearch').value.toLowerCase();
+    if (!search) {
+        renderImages(allImages);
+        return;
+    }
+    const filtered = allImages.filter(img => img.toLowerCase().includes(search));
+    renderImages(filtered);
+};
+
+window.selectImage = function(path) {
+    if (currentImageInput) {
+        currentImageInput.value = path;
+        currentImageInput.dispatchEvent(new Event('input', { bubbles: true }));
+        currentImageInput.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    closeImagePicker();
+};
+
+// ✅ إضافة زر 📁 لكل حقل صورة
+function attachImagePickers() {
+    const selectors = [
+        '#img1', '#img2', '#img3', '#img4',
+        '.hl-img', '.block-image'
+    ].join(',');
+
+    document.querySelectorAll(selectors).forEach(input => {
+        if (input.dataset.hasPicker === '1') return;
+        input.dataset.hasPicker = '1';
+
+        const wrapper = input.parentElement;
+        if (!wrapper) return;
+
+        wrapper.style.position = 'relative';
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'pick-image-btn';
+        btn.textContent = '📁';
+        btn.title = 'اختيار صورة من المكتبة';
+        btn.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            openImagePicker(input);
+        };
+
+        wrapper.appendChild(btn);
+        input.classList.add('has-picker');
+    });
+}
+
+// ✅ مراقبة DOM لإضافة الأزرار تلقائياً عند كل صف جديد
+const pickerObserver = new MutationObserver(() => {
+    attachImagePickers();
+});
+pickerObserver.observe(document.body, { childList: true, subtree: true });
+
+// ✅ تشغيل أولي
+setTimeout(attachImagePickers, 300);
+setTimeout(attachImagePickers, 800);
+
+// ✅ إغلاق بـ Escape
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeImagePicker();
+});
 </script>
+<!-- ✅ Image Picker Modal -->
+<div class="image-picker-modal" id="imagePickerModal">
+    <div class="image-picker-backdrop" onclick="closeImagePicker()"></div>
+    <div class="image-picker-content">
+        <div class="image-picker-header">
+            <h3>📁 اختر صورة</h3>
+            <div style="display:flex;gap:8px;">
+                <button type="button" class="image-picker-refresh" onclick="refreshImages()" title="تحديث">🔄</button>
+                <button type="button" class="image-picker-close" onclick="closeImagePicker()">✕</button>
+            </div>
+        </div>
+        <input type="text" id="imageSearch" class="image-picker-search" placeholder="🔍 ابحث عن صورة..." oninput="filterImages()">
+        <div class="image-picker-grid" id="imagePickerGrid">
+            <div style="grid-column:1/-1;text-align:center;padding:30px;color:#999;">جارٍ التحميل...</div>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

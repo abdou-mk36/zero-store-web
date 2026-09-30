@@ -1,0 +1,4 @@
+assets/products/
+assets/product/product-photo/
+assets/product/product-highlight/
+assets/landings/
