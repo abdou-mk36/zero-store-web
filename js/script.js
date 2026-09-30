@@ -876,11 +876,11 @@ if (document.getElementById('wheelTrack') && !new URLSearchParams(location.searc
    TELEGRAM — عبر Cloudflare Worker (آمن)
 ========================================================= */
 const TELEGRAM_PROXY_URL = "https://zero-store-proxy.mekdicheabdessalam36.workers.dev";
+const TELEGRAM_CHAT_ORDERS = "-1004491843696";
+const TELEGRAM_CHAT_REVIEWS = "-1004316332526";
 
 function sendToTelegram(chatId, message) {
-    // ✅ نحدد النوع من chatId
     const type = (chatId === "-1004491843696") ? "order" : "review";
-    
     return fetch(TELEGRAM_PROXY_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
