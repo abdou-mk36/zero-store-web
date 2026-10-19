@@ -1626,7 +1626,7 @@ button.white {
 }
 
 .dot.active.running .fill {
-    animation: productDotFill 3s linear forwards;
+    animation: productDotFill 9s linear forwards;
 }
 
 @keyframes productDotFill {
@@ -1829,7 +1829,7 @@ button.white {
 
 /* تشغيل حركة الامتلاء للنقطة النشطة */
 .highlight-dot.active.running .fill {
-    animation: appleDotFill 5s linear forwards; /* 5s هي مدة السلايدر */
+    animation: appleDotFill 10s linear forwards; /* 5s هي مدة السلايدر */
 }
 
 /* حركة الامتلاء تدريجياً */
