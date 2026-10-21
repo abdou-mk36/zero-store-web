@@ -1829,7 +1829,7 @@ button.white {
 
 /* تشغيل حركة الامتلاء للنقطة النشطة */
 .highlight-dot.active.running .fill {
-    animation: appleDotFill 10s linear forwards; /* 5s هي مدة السلايدر */
+    animation: appleDotFill 14s linear forwards; /* 5s هي مدة السلايدر */
 }
 
 /* حركة الامتلاء تدريجياً */
