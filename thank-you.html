@@ -414,6 +414,14 @@ src="https://www.facebook.com/tr?id=2341410356616311&ev=PageView&noscript=1"
         });
     }
 </script>
+<script>
+    // ✅ تتبع إتمام الطلب
+    if (typeof fbq === 'function') {
+        fbq('track', 'Purchase', {
+            currency: 'DZD'
+        });
+    }
+</script>
 
 <script>
     const params = new URLSearchParams(location.search);
